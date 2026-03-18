@@ -697,6 +697,41 @@ namespace ET
                 return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTPatrol");
             }
 
+            if (string.Equals(nodeTypeId, "combat.action.find_target", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTFindCombatTarget");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.action.clear_invalid_target", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTClearInvalidTarget");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.action.move_to_range", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTMoveToCombatRange");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.action.face_target", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTFaceTarget");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.action.select_skill", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTSelectSkill");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.action.cast_selected_skill", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTCastSelectedSkill");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.action.wait_cast_complete", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTWaitCastComplete");
+            }
+
             return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTActionCall");
         }
 
@@ -715,6 +750,21 @@ namespace ET
             if (string.Equals(nodeTypeId, BTPatrolNodeTypes.HasPatrolPath, StringComparison.OrdinalIgnoreCase))
             {
                 return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTHasPatrolPath");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.condition.validate_target", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTValidateCombatTarget");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.condition.can_cast_selected_skill", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTCanCastSelectedSkill");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.condition.need_retreat", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTNeedRetreat");
             }
 
             return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTConditionCall");

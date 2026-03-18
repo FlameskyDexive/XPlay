@@ -104,6 +104,56 @@ namespace ET
     }
 
     [EnableClass]
+    public sealed class BTFindCombatTarget : BTAction
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTValidateCombatTarget : BTCondition
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTClearInvalidTarget : BTAction
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTMoveToCombatRange : BTAction
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTFaceTarget : BTAction
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTSelectSkill : BTAction
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTCanCastSelectedSkill : BTCondition
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTCastSelectedSkill : BTAction
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTWaitCastComplete : BTAction
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTNeedRetreat : BTCondition
+    {
+    }
+
+    [EnableClass]
     public sealed class BTWait : BTNode
     {
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ET.EventType;
 
@@ -10,19 +10,15 @@ namespace ET
     [FriendOf(typeof(ActionEvent))]
     public static partial class SkillTimelineComponentSystem
     {
-        
         [EntitySystem]
         private static void Awake(this SkillTimelineComponent self, int skillId, int skillLevel)
         {
-            //当前测试，一个事件一个字段，可以自己换成二维数组一个字段存多条事件数据
             self.Skillconfig = SkillConfigCategory.Instance.Get(skillId, skillLevel);
-            
         }
-        
+
         /// <summary>
         /// 固定帧驱动
         /// </summary>
-        /// <param name="self"></param>
         [EntitySystem]
         public static void FixedUpdate(this SkillTimelineComponent self)
         {
@@ -35,7 +31,8 @@ namespace ET
 
                     if (timeNow > actionEvent.EventTriggerTime)
                     {
-                        ActionEventComponent.Instance.Run(actionEvent, new ActionEventData(){actionEventType = actionEvent.ActionEventType, owner = actionEvent.OwnerUnit});
+                        ActionEventComponent.Instance.Run(actionEvent,
+                            new ActionEventData() { actionEventType = actionEvent.ActionEventType, owner = actionEvent.OwnerUnit });
                         list.Add(key);
                     }
                 }
@@ -46,13 +43,35 @@ namespace ET
                 }
             }
         }
-        
+
         public static void StartPlay(this SkillTimelineComponent self)
         {
+            self.ClearEvents();
             self.StartSpellTime = TimeInfo.Instance.ServerNow();
             self.InitEvents();
         }
-        
+
+        public static void ClearEvents(this SkillTimelineComponent self)
+        {
+            if (self.Children == null || self.Children.Count == 0)
+            {
+                return;
+            }
+
+            using (ListComponent<long> list = ListComponent<long>.Create())
+            {
+                foreach ((long key, Entity _) in self.Children)
+                {
+                    list.Add(key);
+                }
+
+                foreach (long id in list)
+                {
+                    self.Remove(id);
+                }
+            }
+        }
+
         public static void InitEvents(this SkillTimelineComponent self)
         {
             try
@@ -62,11 +81,15 @@ namespace ET
                     int actionEventId = self.Skillconfig.ActionEventIds[i];
                     ActionEventConfig actionEventConfig = ActionEventConfigCategory.Instance.Get(actionEventId);
                     if (actionEventConfig == null)
+                    {
                         continue;
+                    }
+
 #if DOTNET
-                    //客户端渲染层的事件服务端不处理
                     if (actionEventConfig.IsClientOnly)
+                    {
                         continue;
+                    }
 #endif
 
                     int triggerTime = self.Skillconfig.ActionEventTriggerPercent[i] * self.Skillconfig.Life / 100;
@@ -77,7 +100,6 @@ namespace ET
             {
                 Log.Error($"事件id与事件触发时间百分比数量不一致， 技能id：{self.Skillconfig.Id}, lv:{self.Skillconfig.Level} \n{e}");
             }
-            
         }
 
         private static void Remove(this SkillTimelineComponent self, long id)
@@ -91,6 +113,4 @@ namespace ET
             self.Children.Remove(id);
         }
     }
-
-   
 }
