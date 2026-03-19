@@ -7,6 +7,7 @@
         "Unity.Mathematics",
         "Unity.Loader",
         "Unity.Model",
+        "Animancer",
         "YooAsset"
     ],
     "includePlatforms": [],

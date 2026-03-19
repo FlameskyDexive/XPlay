@@ -5,6 +5,7 @@ namespace ET
         public const string FindCombatTarget = "combat.action.find_target";
         public const string ValidateCombatTarget = "combat.condition.validate_target";
         public const string ClearInvalidTarget = "combat.action.clear_invalid_target";
+        public const string SetCombatState = "combat.action.set_state";
         public const string StopMove = "combat.action.stop_move";
         public const string MoveToCombatRange = "combat.action.move_to_range";
         public const string RetreatFromCombatTarget = "combat.action.retreat_from_target";
@@ -30,5 +31,6 @@ namespace ET
         public const string HpRatio = "Combat.HpRatio";
         public const string IsDead = "Combat.IsDead";
         public const string NeedRetreat = "Combat.NeedRetreat";
+        public const string StateChangeResult = "Combat.StateChangeResult";
     }
 }

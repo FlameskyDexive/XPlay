@@ -36,6 +36,16 @@
 	    public const int ShieldFinalAdd = Shield * 10 + 4;
 	    public const int ShieldFinalPct = Shield * 10 + 5;
 
+	    public const int Mp = 1005;
+	    public const int MpBase = Mp * 10 + 1;
+
+	    public const int MaxMp = 1006;
+	    public const int MaxMpBase = MaxMp * 10 + 1;
+	    public const int MaxMpAdd = MaxMp * 10 + 2;
+	    public const int MaxMpPct = MaxMp * 10 + 3;
+	    public const int MaxMpFinalAdd = MaxMp * 10 + 4;
+	    public const int MaxMpFinalPct = MaxMp * 10 + 5;
+
         
         public const int Attack = 1011;         //攻击力
         public const int AttackBase = Attack * 10 + 1;

@@ -66,6 +66,18 @@ namespace ET
                 {
                     return ESkillCastResult.BlockedByTag;
                 }
+
+                if (combatStateComponent.HasAnyTag(ECombatTag.Frozen | ECombatTag.Stiff | ECombatTag.Airborne))
+                {
+                    return ESkillCastResult.BlockedByTag;
+                }
+            }
+
+            self.FillRequestAim(skill, ref request);
+
+            if (RequiresTarget(skill) && request.TargetUnitId == 0)
+            {
+                return ESkillCastResult.NoTarget;
             }
 
             if (request.TargetUnitId != 0)
@@ -80,6 +92,12 @@ namespace ET
                 {
                     return ESkillCastResult.OutOfRange;
                 }
+            }
+
+            long mpCost = GetMpCost(skill);
+            if (mpCost > 0 && (numericComponent?.GetAsLong(NumericType.Mp) ?? 0) < mpCost)
+            {
+                return ESkillCastResult.InsufficientMp;
             }
 
             if (skill.IsInCd())
@@ -98,6 +116,94 @@ namespace ET
             }
 
             return ESkillCastResult.Success;
+        }
+
+        public static bool RequiresTarget(this Skill skill)
+        {
+            if (skill?.SkillConfig?.ActionEventIds == null)
+            {
+                return false;
+            }
+
+            for (int index = 0; index < skill.SkillConfig.ActionEventIds.Count; ++index)
+            {
+                ActionEventConfig actionEventConfig = ActionEventConfigCategory.Instance.GetOrDefault(skill.SkillConfig.ActionEventIds[index]);
+                if (actionEventConfig == null)
+                {
+                    continue;
+                }
+
+                switch (actionEventConfig.EventData)
+                {
+                    case ChangeNumericActionEventData changeNumericActionEventData:
+                    {
+                        if (UsesHardTarget(ActionEventTargetHelper.GetTargetRule(changeNumericActionEventData.TargetRule, EActionEventTargetRule.CurrentTarget)))
+                        {
+                            return true;
+                        }
+
+                        break;
+                    }
+                    case AddBuffActionEventData addBuffActionEventData:
+                    {
+                        if (UsesHardTarget(ActionEventTargetHelper.GetTargetRule(addBuffActionEventData.TargetRule, EActionEventTargetRule.CurrentTarget)))
+                        {
+                            return true;
+                        }
+
+                        break;
+                    }
+                    case RemoveBuffActionEventData removeBuffActionEventData:
+                    {
+                        if (UsesHardTarget(ActionEventTargetHelper.GetTargetRule(removeBuffActionEventData.TargetRule, EActionEventTargetRule.CurrentTarget)))
+                        {
+                            return true;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static long GetMpCost(this Skill skill)
+        {
+            if (skill?.SkillConfig?.ActionEventIds == null)
+            {
+                return 0;
+            }
+
+            long mpCost = 0;
+            for (int index = 0; index < skill.SkillConfig.ActionEventIds.Count; ++index)
+            {
+                ActionEventConfig actionEventConfig = ActionEventConfigCategory.Instance.GetOrDefault(skill.SkillConfig.ActionEventIds[index]);
+                if (actionEventConfig?.EventData is not ChangeNumericActionEventData changeNumericActionEventData)
+                {
+                    continue;
+                }
+
+                if (changeNumericActionEventData.NumericType != NumericType.Mp || changeNumericActionEventData.Delta >= 0)
+                {
+                    continue;
+                }
+
+                EActionEventTargetRule targetRule = ActionEventTargetHelper.GetTargetRule(changeNumericActionEventData.TargetRule, EActionEventTargetRule.CurrentTarget);
+                if (targetRule != EActionEventTargetRule.Self)
+                {
+                    continue;
+                }
+
+                mpCost += -changeNumericActionEventData.Delta;
+            }
+
+            return mpCost;
+        }
+
+        private static bool UsesHardTarget(EActionEventTargetRule targetRule)
+        {
+            return targetRule == EActionEventTargetRule.CurrentTarget || targetRule == EActionEventTargetRule.ExplicitTarget;
         }
 
         public static bool TryStartCast(this SkillCastComponent self, Skill skill, SkillCastRequest request, out ESkillCastResult result)

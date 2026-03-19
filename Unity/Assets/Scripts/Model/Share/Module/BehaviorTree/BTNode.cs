@@ -119,6 +119,11 @@ namespace ET
     }
 
     [EnableClass]
+    public sealed class BTSetCombatState : BTAction
+    {
+    }
+
+    [EnableClass]
     public sealed class BTStopMove : BTAction
     {
     }

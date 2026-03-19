@@ -155,6 +155,18 @@ namespace ET
         ActiveWindow = 4,
         Recover = 5,
         Dead = 6,
+        Move = 7,
+    }
+
+    public enum ECombatAnimState : byte
+    {
+        None = 0,
+        Idle = 1,
+        Move = 2,
+        CastPoint = 3,
+        CastActive = 4,
+        Hit = 5,
+        Dead = 6,
     }
 
     [Flags]
@@ -166,6 +178,22 @@ namespace ET
         HardControl = 1L << 2,
         SuperArmor = 1L << 3,
         Dead = 1L << 4,
+        Frozen = 1L << 5,
+        Stiff = 1L << 6,
+        Airborne = 1L << 7,
+    }
+
+    public enum ECombatStateChangeResult : byte
+    {
+        Success = 0,
+        InvalidState = 1,
+        Dead = 2,
+        BlockedByTag = 3,
+        SkillNotFound = 4,
+        NoTarget = 5,
+        InCd = 6,
+        Controlled = 7,
+        InsufficientMp = 8,
     }
 
     public enum ESkillCastResult : byte
@@ -179,6 +207,7 @@ namespace ET
         Controlled = 6,
         OutOfRange = 7,
         BlockedByTag = 8,
+        InsufficientMp = 9,
     }
 
     public enum EInterruptLevel : byte
@@ -213,5 +242,12 @@ namespace ET
         public int BuffId;
         public long SourceUnitId;
         public int SourceSkillConfigId;
+    }
+
+    public struct CombatStateChangeRequest
+    {
+        public ECombatSubState TargetSubState;
+        public int SkillId;
+        public long TargetUnitId;
     }
 }

@@ -2,6 +2,7 @@ using Unity.Mathematics;
 
 namespace ET
 {
+    [FriendOf(typeof(CombatStateComponent))]
     public static class BTCombatHelper
     {
         public static bool TryGetCombatUnit(this BTExecutionContext self, out Unit unit)
@@ -34,6 +35,21 @@ namespace ET
             SkillCastComponent skillCastComponent = unit.GetComponent<SkillCastComponent>();
             self.Blackboard.Set(BTCombatBlackboardKeys.InCast, skillCastComponent != null && skillCastComponent.IsCasting());
             self.Blackboard.Set(BTCombatBlackboardKeys.InControl, combatStateComponent != null && combatStateComponent.IsInControl());
+
+            TargetComponent targetComponent = unit.GetComponent<TargetComponent>();
+            long targetId = targetComponent != null ? targetComponent.GetCurrentTargetId() : 0;
+            if (TargetSelectHelper.TryGetTarget(unit, targetId, out Unit target) && TargetSelectHelper.IsValidCombatTarget(unit, target))
+            {
+                self.Blackboard.Set(BTCombatBlackboardKeys.TargetId, target.Id);
+                self.Blackboard.Set(BTCombatBlackboardKeys.TargetDistance, TargetSelectHelper.GetDistance(unit, target));
+                self.Blackboard.Set(BTCombatBlackboardKeys.HasTarget, true);
+            }
+            else
+            {
+                self.Blackboard.Remove(BTCombatBlackboardKeys.TargetId);
+                self.Blackboard.Remove(BTCombatBlackboardKeys.TargetDistance);
+                self.Blackboard.Set(BTCombatBlackboardKeys.HasTarget, false);
+            }
         }
 
         public static void SetCombatTarget(this BTExecutionContext self, Unit unit, Unit target)
@@ -229,6 +245,113 @@ namespace ET
             return result == ESkillCastResult.Success;
         }
 
+        public static bool TryBuildStateChangeRequest(this BTExecutionContext self, Unit unit, ECombatSubState targetSubState,
+            out CombatStateChangeRequest request, out ECombatStateChangeResult result)
+        {
+            request = new CombatStateChangeRequest
+            {
+                TargetSubState = targetSubState,
+            };
+            result = ECombatStateChangeResult.InvalidState;
+
+            if (unit == null || unit.IsDisposed)
+            {
+                return false;
+            }
+
+            CombatStateComponent combatStateComponent = unit.GetComponent<CombatStateComponent>();
+            if (combatStateComponent == null)
+            {
+                return false;
+            }
+
+            if (combatStateComponent.State == ECombatState.Dead || combatStateComponent.HasAnyTag(ECombatTag.Dead))
+            {
+                result = ECombatStateChangeResult.Dead;
+                return targetSubState == ECombatSubState.Dead;
+            }
+
+            switch (targetSubState)
+            {
+                case ECombatSubState.Idle:
+                {
+                    if (combatStateComponent.State == ECombatState.Casting)
+                    {
+                        return false;
+                    }
+
+                    result = combatStateComponent.HasAnyTag(GetStateSwitchBlockTags())
+                        ? ECombatStateChangeResult.BlockedByTag
+                        : ECombatStateChangeResult.Success;
+                    return result == ECombatStateChangeResult.Success;
+                }
+                case ECombatSubState.Move:
+                {
+                    if (combatStateComponent.State == ECombatState.Casting)
+                    {
+                        return false;
+                    }
+
+                    if (combatStateComponent.HasAnyTag(GetStateSwitchBlockTags()))
+                    {
+                        result = ECombatStateChangeResult.BlockedByTag;
+                        return false;
+                    }
+
+                    result = unit.GetComponent<PlayerMoveComponent>() != null ? ECombatStateChangeResult.Success : ECombatStateChangeResult.InvalidState;
+                    return result == ECombatStateChangeResult.Success;
+                }
+                case ECombatSubState.CastPoint:
+                {
+                    if (!self.TryGetSelectedSkill(unit, out Skill skill, out _))
+                    {
+                        result = ECombatStateChangeResult.SkillNotFound;
+                        return false;
+                    }
+
+                    request.SkillId = skill.SkillConfig.Id;
+                    request.TargetUnitId = self.Blackboard?.Get<long>(BTCombatBlackboardKeys.TargetId, 0) ?? 0;
+                    SkillCastComponent skillCastComponent = unit.GetComponent<SkillCastComponent>();
+                    if (skillCastComponent == null)
+                    {
+                        return false;
+                    }
+
+                    SkillCastRequest skillCastRequest = new SkillCastRequest
+                    {
+                        SkillId = skill.SkillConfig.Id,
+                        TargetUnitId = request.TargetUnitId,
+                        AimPoint = unit.Position,
+                        AimDirection = unit.Forward,
+                        PressedTime = TimeInfo.Instance.ServerNow(),
+                    };
+
+                    result = MapCastResult(skillCastComponent.ValidateCast(skill, skillCastRequest));
+                    return result == ECombatStateChangeResult.Success;
+                }
+                case ECombatSubState.ActiveWindow:
+                case ECombatSubState.Recover:
+                {
+                    request.SkillId = combatStateComponent.CurrentCastSkillId;
+                    request.TargetUnitId = combatStateComponent.CurrentTargetId;
+                    result = combatStateComponent.State == ECombatState.Casting
+                        ? ECombatStateChangeResult.Success
+                        : ECombatStateChangeResult.InvalidState;
+                    return result == ECombatStateChangeResult.Success;
+                }
+                case ECombatSubState.Dead:
+                {
+                    NumericComponent numericComponent = unit.GetComponent<NumericComponent>();
+                    result = numericComponent != null && numericComponent.GetAsLong(NumericType.Hp) <= 0
+                        ? ECombatStateChangeResult.Success
+                        : ECombatStateChangeResult.InvalidState;
+                    return result == ECombatStateChangeResult.Success;
+                }
+                default:
+                    return false;
+            }
+        }
+
         public static bool TryStartMove(Unit unit)
         {
             if (unit == null || unit.IsDisposed)
@@ -280,6 +403,27 @@ namespace ET
             bool canCast = skillCastComponent.ValidateCast(skill) == ESkillCastResult.Success;
             self.Blackboard.Set(BTCombatBlackboardKeys.CanCast, canCast);
             return canCast;
+        }
+
+        private static ECombatTag GetStateSwitchBlockTags()
+        {
+            return ECombatTag.HardControl | ECombatTag.Frozen | ECombatTag.Stiff | ECombatTag.Airborne;
+        }
+
+        private static ECombatStateChangeResult MapCastResult(ESkillCastResult result)
+        {
+            return result switch
+            {
+                ESkillCastResult.Success => ECombatStateChangeResult.Success,
+                ESkillCastResult.SkillNotFound => ECombatStateChangeResult.SkillNotFound,
+                ESkillCastResult.NoTarget => ECombatStateChangeResult.NoTarget,
+                ESkillCastResult.InCd => ECombatStateChangeResult.InCd,
+                ESkillCastResult.Dead => ECombatStateChangeResult.Dead,
+                ESkillCastResult.Controlled => ECombatStateChangeResult.Controlled,
+                ESkillCastResult.BlockedByTag => ECombatStateChangeResult.BlockedByTag,
+                ESkillCastResult.InsufficientMp => ECombatStateChangeResult.InsufficientMp,
+                _ => ECombatStateChangeResult.InvalidState,
+            };
         }
     }
 }

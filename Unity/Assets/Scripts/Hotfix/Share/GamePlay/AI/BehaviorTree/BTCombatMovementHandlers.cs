@@ -3,6 +3,46 @@ using Unity.Mathematics;
 namespace ET
 {
     [BTNodeHandler]
+    public sealed class BTSetCombatStateAction : ABTNodeHandler<BTSetCombatState>
+    {
+        protected override BTExecResult Run(BTSetCombatState node, BTEnv env)
+        {
+            BTExecutionContext context = env.BindContext(node);
+            if (!context.TryGetCombatUnit(out Unit unit))
+            {
+                return BTExecResult.Failure;
+            }
+
+            CombatStateComponent combatStateComponent = unit.GetComponent<CombatStateComponent>();
+            if (combatStateComponent == null)
+            {
+                return BTExecResult.Failure;
+            }
+
+            int stateValue = context.GetIntArgument(node.Definition, "state", (int)ECombatSubState.Idle);
+            if (!System.Enum.IsDefined(typeof(ECombatSubState), stateValue))
+            {
+                return BTExecResult.Failure;
+            }
+
+            ECombatSubState targetSubState = (ECombatSubState)stateValue;
+            bool canSwitch = context.TryBuildStateChangeRequest(unit, targetSubState, out CombatStateChangeRequest request,
+                out ECombatStateChangeResult result);
+            context.Blackboard?.Set(BTCombatBlackboardKeys.StateChangeResult, (int)result);
+            if (!canSwitch)
+            {
+                context.SyncCombatBlackboard(unit);
+                return BTExecResult.Failure;
+            }
+
+            bool success = combatStateComponent.TrySetState(request, out result);
+            context.Blackboard?.Set(BTCombatBlackboardKeys.StateChangeResult, (int)result);
+            context.SyncCombatBlackboard(unit);
+            return success ? BTExecResult.Success : BTExecResult.Failure;
+        }
+    }
+
+    [BTNodeHandler]
     public sealed class BTStopMoveAction : ABTNodeHandler<BTStopMove>
     {
         protected override BTExecResult Run(BTStopMove node, BTEnv env)

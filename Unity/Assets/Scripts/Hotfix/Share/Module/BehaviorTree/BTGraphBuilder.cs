@@ -186,6 +186,12 @@ namespace ET
                 return new BTStopMove();
             }
 
+            if (string.Equals(definition.TypeId, BTCombatNodeTypes.SetCombatState, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(definition.ActionHandlerName, nameof(BTSetCombatState), StringComparison.OrdinalIgnoreCase))
+            {
+                return new BTSetCombatState();
+            }
+
             if (string.Equals(definition.TypeId, BTCombatNodeTypes.MoveToCombatRange, StringComparison.OrdinalIgnoreCase)
                 || string.Equals(definition.ActionHandlerName, nameof(BTMoveToCombatRange), StringComparison.OrdinalIgnoreCase))
             {

@@ -37,10 +37,11 @@ namespace ET.Client
             {
                 NodeId = "control_sequence",
                 Title = "Control Pause",
-                ChildIds = { "in_control", "stop_move_control", "control_wait" },
+                ChildIds = { "in_control", "set_idle_control", "stop_move_control", "control_wait" },
             });
 
             tree.Nodes.Add(CreateCondition("in_control", "In Control", BTCombatNodeTypes.InControl, nameof(BTInControl)));
+            tree.Nodes.Add(CreateCombatStateAction("set_idle_control", "Set Idle", ECombatSubState.Idle));
             tree.Nodes.Add(CreateAction("stop_move_control", "Stop Move", BTCombatNodeTypes.StopMove, nameof(BTStopMove)));
             tree.Nodes.Add(new BTWaitNodeData
             {
@@ -53,7 +54,7 @@ namespace ET.Client
             {
                 NodeId = "retreat_sequence",
                 Title = "Retreat",
-                ChildIds = { "need_retreat", "retreat_target_selector", "retreat_action" },
+                ChildIds = { "need_retreat", "retreat_target_selector", "set_move_retreat", "retreat_action" },
             });
 
             BTConditionNodeData needRetreat = CreateCondition("need_retreat", "Need Retreat", BTCombatNodeTypes.NeedRetreat, nameof(BTNeedRetreat));
@@ -88,13 +89,14 @@ namespace ET.Client
             retreatAction.Arguments.Add(CreateFloatArgument("range", 6f));
             retreatAction.Arguments.Add(CreateIntArgument("tickIntervalMs", 100));
             retreatAction.Arguments.Add(CreateIntArgument("timeoutMs", 3000));
+            tree.Nodes.Add(CreateCombatStateAction("set_move_retreat", "Set Move", ECombatSubState.Move));
             tree.Nodes.Add(retreatAction);
 
             tree.Nodes.Add(new BTSequenceNodeData
             {
                 NodeId = "combat_sequence",
                 Title = "Combat",
-                ChildIds = { "combat_target_selector", "move_to_range", "stop_move_before_cast", "face_target", "select_skill", "can_cast", "cast_skill", "wait_cast_complete" },
+                ChildIds = { "combat_target_selector", "set_move_combat", "move_to_range", "set_idle_before_cast", "stop_move_before_cast", "face_target", "select_skill", "can_cast", "cast_skill", "wait_cast_complete" },
             });
 
             tree.Nodes.Add(new BTSelectorNodeData
@@ -124,8 +126,10 @@ namespace ET.Client
             BTActionNodeData moveToRange = CreateAction("move_to_range", "Move To Range", BTCombatNodeTypes.MoveToCombatRange, nameof(BTMoveToCombatRange));
             moveToRange.Arguments.Add(CreateFloatArgument("range", 2.5f));
             moveToRange.Arguments.Add(CreateIntArgument("tickIntervalMs", 100));
+            tree.Nodes.Add(CreateCombatStateAction("set_move_combat", "Set Move", ECombatSubState.Move));
             tree.Nodes.Add(moveToRange);
 
+            tree.Nodes.Add(CreateCombatStateAction("set_idle_before_cast", "Set Idle", ECombatSubState.Idle));
             tree.Nodes.Add(CreateAction("stop_move_before_cast", "Stop Move", BTCombatNodeTypes.StopMove, nameof(BTStopMove)));
             tree.Nodes.Add(CreateAction("face_target", "Face Target", BTCombatNodeTypes.FaceTarget, nameof(BTFaceTarget)));
 
@@ -169,6 +173,13 @@ namespace ET.Client
                 TypeId = typeId,
                 ActionHandlerName = handlerName,
             };
+        }
+
+        private static BTActionNodeData CreateCombatStateAction(string nodeId, string title, ECombatSubState state)
+        {
+            BTActionNodeData actionNodeData = CreateAction(nodeId, title, BTCombatNodeTypes.SetCombatState, nameof(BTSetCombatState));
+            actionNodeData.Arguments.Add(CreateIntArgument("state", (int)state));
+            return actionNodeData;
         }
 
         private static BTConditionNodeData CreateCondition(string nodeId, string title, string typeId, string handlerName)
