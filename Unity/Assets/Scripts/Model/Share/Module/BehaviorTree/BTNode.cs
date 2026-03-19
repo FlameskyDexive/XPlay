@@ -119,7 +119,17 @@ namespace ET
     }
 
     [EnableClass]
+    public sealed class BTStopMove : BTAction
+    {
+    }
+
+    [EnableClass]
     public sealed class BTMoveToCombatRange : BTAction
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTRetreatFromCombatTarget : BTAction
     {
     }
 
@@ -135,6 +145,11 @@ namespace ET
 
     [EnableClass]
     public sealed class BTCanCastSelectedSkill : BTCondition
+    {
+    }
+
+    [EnableClass]
+    public sealed class BTInControl : BTCondition
     {
     }
 

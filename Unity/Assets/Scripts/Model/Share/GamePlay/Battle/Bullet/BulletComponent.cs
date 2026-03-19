@@ -12,6 +12,7 @@ namespace ET
 
         public EntityRef<Unit> OwnerUnit;
         public EntityRef<Skill> OwnerSkill;
+        public List<int> HitActionEventIds = new List<int>();
         public long EndTime;
 
     }

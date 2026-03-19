@@ -24,6 +24,9 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
         Position = _buf.ReadInt();
         Height = _buf.ReadInt();
         Weight = _buf.ReadInt();
+        Hp = _buf.ReadInt();
+        Attack = _buf.ReadInt();
+        Speed = _buf.ReadFloat();
         PostInit();
     }
 
@@ -57,6 +60,18 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
     /// 体重
     /// </summary>
     public int Weight { get; private set; }
+    /// <summary>
+    /// 生命值
+    /// </summary>
+    public int Hp { get; private set; }
+    /// <summary>
+    /// 攻击力
+    /// </summary>
+    public int Attack { get; private set; }
+    /// <summary>
+    /// 速度
+    /// </summary>
+    public float Speed { get; private set; }
 
     public const int __ID__ = -568528378;
     public override int GetTypeId() => __ID__;
@@ -80,6 +95,9 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
         + "Position:" + Position + ","
         + "Height:" + Height + ","
         + "Weight:" + Weight + ","
+        + "Hp:" + Hp + ","
+        + "Attack:" + Attack + ","
+        + "Speed:" + Speed + ","
         + "}";
     }
     

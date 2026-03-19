@@ -31,6 +31,12 @@ namespace ET
         /// <param name="angle"></param>
         public static void AddCollider(this CollisionComponent self, EColliderType colliderType, Vector2 vec2, Vector2 offset, bool isSensor, object userData, float angle = 0)
         {
+            if (self.WorldComponent == null)
+            {
+                Log.Warning($"collision world missing for unit: {self.GetParent<Unit>()?.Id}");
+                return;
+            }
+
             Log.Info($"{self.GetParent<Unit>()?.Config()?.Name} add collider:{vec2.X}");
             self.Body = self.WorldComponent.CreateDynamicBody();
             switch (colliderType)
@@ -88,7 +94,13 @@ namespace ET
         [EntitySystem]
         public static void Destroy(this CollisionComponent self)
         {
-            
+            if (self.Body == null || self.WorldComponent == null)
+            {
+                return;
+            }
+
+            self.WorldComponent.AddBodyTobeDestroyed(self.Body);
+            self.Body = null;
         }
     }
 }

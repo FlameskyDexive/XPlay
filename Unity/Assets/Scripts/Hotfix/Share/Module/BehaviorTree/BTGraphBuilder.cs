@@ -180,10 +180,22 @@ namespace ET
                 return new BTClearInvalidTarget();
             }
 
+            if (string.Equals(definition.TypeId, BTCombatNodeTypes.StopMove, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(definition.ActionHandlerName, nameof(BTStopMove), StringComparison.OrdinalIgnoreCase))
+            {
+                return new BTStopMove();
+            }
+
             if (string.Equals(definition.TypeId, BTCombatNodeTypes.MoveToCombatRange, StringComparison.OrdinalIgnoreCase)
                 || string.Equals(definition.ActionHandlerName, nameof(BTMoveToCombatRange), StringComparison.OrdinalIgnoreCase))
             {
                 return new BTMoveToCombatRange();
+            }
+
+            if (string.Equals(definition.TypeId, BTCombatNodeTypes.RetreatFromCombatTarget, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(definition.ActionHandlerName, nameof(BTRetreatFromCombatTarget), StringComparison.OrdinalIgnoreCase))
+            {
+                return new BTRetreatFromCombatTarget();
             }
 
             if (string.Equals(definition.TypeId, BTCombatNodeTypes.FaceTarget, StringComparison.OrdinalIgnoreCase)
@@ -243,6 +255,12 @@ namespace ET
                 || string.Equals(definition.ConditionHandlerName, nameof(BTCanCastSelectedSkill), StringComparison.OrdinalIgnoreCase))
             {
                 return new BTCanCastSelectedSkill();
+            }
+
+            if (string.Equals(definition.TypeId, BTCombatNodeTypes.InControl, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(definition.ConditionHandlerName, nameof(BTInControl), StringComparison.OrdinalIgnoreCase))
+            {
+                return new BTInControl();
             }
 
             if (string.Equals(definition.TypeId, BTCombatNodeTypes.NeedRetreat, StringComparison.OrdinalIgnoreCase)

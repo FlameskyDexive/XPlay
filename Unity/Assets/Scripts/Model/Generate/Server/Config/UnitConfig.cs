@@ -23,6 +23,9 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
         Name_l10n_key = _buf.ReadString(); Name = _buf.ReadString();
         Position = _buf.ReadInt();
         Weight = _buf.ReadInt();
+        Hp = _buf.ReadInt();
+        Attack = _buf.ReadInt();
+        Speed = _buf.ReadFloat();
         PostInit();
     }
 
@@ -52,6 +55,18 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
     /// 体重
     /// </summary>
     public int Weight { get; private set; }
+    /// <summary>
+    /// 生命值
+    /// </summary>
+    public int Hp { get; private set; }
+    /// <summary>
+    /// 攻击力
+    /// </summary>
+    public int Attack { get; private set; }
+    /// <summary>
+    /// 速度
+    /// </summary>
+    public float Speed { get; private set; }
 
     public const int __ID__ = -568528378;
     public override int GetTypeId() => __ID__;
@@ -74,6 +89,9 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
         + "Name:" + Name + ","
         + "Position:" + Position + ","
         + "Weight:" + Weight + ","
+        + "Hp:" + Hp + ","
+        + "Attack:" + Attack + ","
+        + "Speed:" + Speed + ","
         + "}";
     }
     

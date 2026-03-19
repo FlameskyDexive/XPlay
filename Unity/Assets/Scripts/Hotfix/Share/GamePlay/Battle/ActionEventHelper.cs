@@ -22,10 +22,28 @@ namespace ET
                 RunActionEvent(actionEvent);
         }
 
+        public static void CreateActionEvent(this BulletComponent self, int actionEventId, Unit target, bool isAutoRun = true)
+        {
+            ActionEvent actionEvent = self.AddChild<ActionEvent, int, int, EActionEventSourceType>(actionEventId, 0, EActionEventSourceType.Bullet);
+            if (isAutoRun)
+            {
+                RunActionEvent(actionEvent, target);
+            }
+        }
+
         private static void RunActionEvent(ActionEvent actionEvent)
         {
+            RunActionEvent(actionEvent, null);
+        }
 
-            ActionEventComponent.Instance.Run(actionEvent, new ActionEventData() { actionEventType = actionEvent.ActionEventType, owner = actionEvent.OwnerUnit });
+        private static void RunActionEvent(ActionEvent actionEvent, Unit target)
+        {
+            ActionEventComponent.Instance.Run(actionEvent, new ActionEventData()
+            {
+                actionEventType = actionEvent.ActionEventType,
+                owner = actionEvent.OwnerUnit,
+                target = target,
+            });
             actionEvent.Dispose();
         }
     }

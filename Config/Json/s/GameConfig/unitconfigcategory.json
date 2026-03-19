@@ -7,7 +7,10 @@
       "text": "米克尔"
     },
     "Position": 1,
-    "Weight": 68
+    "Weight": 68,
+    "Hp": 68,
+    "Attack": 10,
+    "Speed": 5
   },
   {
     "Id": 1002,
@@ -17,7 +20,10 @@
       "text": "米克尔2"
     },
     "Position": 2,
-    "Weight": 78
+    "Weight": 78,
+    "Hp": 78,
+    "Attack": 10,
+    "Speed": 5
   },
   {
     "Id": 1003,
@@ -27,7 +33,10 @@
       "text": "米克尔3"
     },
     "Position": 3,
-    "Weight": 68
+    "Weight": 68,
+    "Hp": 68,
+    "Attack": 10,
+    "Speed": 5
   },
   {
     "Id": 1004,
@@ -37,7 +46,10 @@
       "text": "米克尔4"
     },
     "Position": 4,
-    "Weight": 78
+    "Weight": 78,
+    "Hp": 78,
+    "Attack": 10,
+    "Speed": 5
   },
   {
     "Id": 2001,
@@ -47,7 +59,10 @@
       "text": "米克尔"
     },
     "Position": 1,
-    "Weight": 68
+    "Weight": 68,
+    "Hp": 1,
+    "Attack": 0,
+    "Speed": 0
   },
   {
     "Id": 5001,
@@ -57,6 +72,22 @@
       "text": "米克尔4"
     },
     "Position": 4,
-    "Weight": 78
+    "Weight": 78,
+    "Hp": 1,
+    "Attack": 0,
+    "Speed": 10
+  },
+  {
+    "Id": 3001,
+    "Type": 2,
+    "Name": {
+      "key": "UnitConfig.Name.3001",
+      "text": "训练假人"
+    },
+    "Position": 5,
+    "Weight": 72,
+    "Hp": 120,
+    "Attack": 8,
+    "Speed": 4
   }
 ]

@@ -75,6 +75,20 @@ namespace ET
     }
 
     [BTNodeDescriptor]
+    public sealed class BTStopMoveNodeDescriptor : ABTNodeDescriptor
+    {
+        public override string TypeId => "combat.action.stop_move";
+
+        public override BTNodeKind NodeKind => BTNodeKind.Action;
+
+        public override string MenuPath => "Behaviors/Combat/Stop Move";
+
+        public override string HandlerName => "BTStopMove";
+
+        public override string Description => "Stops the unit's current combat movement immediately.";
+    }
+
+    [BTNodeDescriptor]
     public sealed class BTMoveToCombatRangeNodeDescriptor : ABTNodeDescriptor
     {
         public override string TypeId => "combat.action.move_to_range";
@@ -109,6 +123,57 @@ namespace ET
                 {
                     ValueType = BTValueType.Integer,
                     IntValue = 100,
+                },
+            },
+        };
+    }
+
+    [BTNodeDescriptor]
+    public sealed class BTRetreatFromCombatTargetNodeDescriptor : ABTNodeDescriptor
+    {
+        public override string TypeId => "combat.action.retreat_from_target";
+
+        public override BTNodeKind NodeKind => BTNodeKind.Action;
+
+        public override string MenuPath => "Behaviors/Combat/Retreat From Target";
+
+        public override string HandlerName => "BTRetreatFromCombatTarget";
+
+        public override string Description => "Moves the unit away from the current combat target until the configured safe distance is reached.";
+
+        public override IReadOnlyList<BTNodeParameterDefinition> Parameters => new List<BTNodeParameterDefinition>
+        {
+            new()
+            {
+                Name = "range",
+                DisplayName = "Safe Range",
+                ValueType = BTValueType.Float,
+                DefaultValue = new BTSerializedValue
+                {
+                    ValueType = BTValueType.Float,
+                    FloatValue = 6f,
+                },
+            },
+            new()
+            {
+                Name = "tickIntervalMs",
+                DisplayName = "Tick Interval",
+                ValueType = BTValueType.Integer,
+                DefaultValue = new BTSerializedValue
+                {
+                    ValueType = BTValueType.Integer,
+                    IntValue = 100,
+                },
+            },
+            new()
+            {
+                Name = "timeoutMs",
+                DisplayName = "Timeout",
+                ValueType = BTValueType.Integer,
+                DefaultValue = new BTSerializedValue
+                {
+                    ValueType = BTValueType.Integer,
+                    IntValue = 3000,
                 },
             },
         };
@@ -169,6 +234,20 @@ namespace ET
         public override string HandlerName => "BTCanCastSelectedSkill";
 
         public override string Description => "Validates whether the selected skill can currently be cast by the unit.";
+    }
+
+    [BTNodeDescriptor]
+    public sealed class BTInControlNodeDescriptor : ABTNodeDescriptor
+    {
+        public override string TypeId => "combat.condition.in_control";
+
+        public override BTNodeKind NodeKind => BTNodeKind.Condition;
+
+        public override string MenuPath => "Conditions/Combat/In Control";
+
+        public override string HandlerName => "BTInControl";
+
+        public override string Description => "Returns success when the unit is currently under a combat control state and should suspend offensive behavior.";
     }
 
     [BTNodeDescriptor]

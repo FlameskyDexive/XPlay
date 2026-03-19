@@ -1,3 +1,4 @@
+using System;
 using Unity.Mathematics;
 
 namespace ET
@@ -156,6 +157,17 @@ namespace ET
         Dead = 6,
     }
 
+    [Flags]
+    public enum ECombatTag : long
+    {
+        None = 0,
+        Silence = 1L << 0,
+        SoftControl = 1L << 1,
+        HardControl = 1L << 2,
+        SuperArmor = 1L << 3,
+        Dead = 1L << 4,
+    }
+
     public enum ESkillCastResult : byte
     {
         Success = 0,
@@ -163,6 +175,26 @@ namespace ET
         InCd = 2,
         Dead = 3,
         InvalidState = 4,
+        NoTarget = 5,
+        Controlled = 6,
+        OutOfRange = 7,
+        BlockedByTag = 8,
+    }
+
+    public enum EInterruptLevel : byte
+    {
+        None = 0,
+        Soft = 1,
+        Hard = 2,
+        Fatal = 3,
+    }
+
+    public enum EActionEventTargetRule : byte
+    {
+        Self = 0,
+        CurrentTarget = 1,
+        CurrentOrSelf = 2,
+        ExplicitTarget = 3,
     }
 
     public struct SkillCastRequest
@@ -174,5 +206,12 @@ namespace ET
         public float3 AimDirection;
         public int ClientCastSeq;
         public long PressedTime;
+    }
+
+    public struct BuffApplyRequest
+    {
+        public int BuffId;
+        public long SourceUnitId;
+        public int SourceSkillConfigId;
     }
 }

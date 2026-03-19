@@ -11,20 +11,35 @@ namespace ET
         {
             Unit unitA = (Unit)args.contact.FixtureA.UserData;
             Unit unitB = (Unit)args.contact.FixtureB.UserData;
-            if (unitA.IsDisposed || unitB.IsDisposed)
+            if (unitA == null || unitB == null || unitA.IsDisposed || unitB.IsDisposed)
             {
                 return;
             }
-            Log.Info($"start contact:{unitA.Config().Name}, {unitB.Config().Name}");
             
             //当前子弹只处理子弹伤害，子弹回血（给队友回血/技能吸血自行拓展）
-            if (unitA.Type() == EUnitType.Bullet && unitB.Type() == EUnitType.Player)
+            if (unitA.Type() == EUnitType.Bullet && IsCombatUnit(unitB))
             {
-                BattleHelper.HitSettle(unitA.GetComponent<BulletComponent>().OwnerUnit, unitB, EHitFromType.Skill_Bullet, unitA);
+                BulletComponent bulletComponent = unitA.GetComponent<BulletComponent>();
+                Unit owner = bulletComponent?.OwnerUnit;
+                if (owner == null || owner.Id == unitB.Id)
+                {
+                    return;
+                }
+
+                ResolveBulletHit(unitA, unitB, bulletComponent, owner);
+                scene.GetComponent<UnitComponent>()?.Remove(unitA.Id);
             }//由于box2d没有双向碰撞响应，处理不同类型的时候判断各自类型
-            else if (unitA.Type() == EUnitType.Player && unitB.Type() == EUnitType.Bullet)
+            else if (IsCombatUnit(unitA) && unitB.Type() == EUnitType.Bullet)
             {
-                BattleHelper.HitSettle(unitA, unitB.GetComponent<BulletComponent>().OwnerUnit, EHitFromType.Skill_Bullet, unitB);
+                BulletComponent bulletComponent = unitB.GetComponent<BulletComponent>();
+                Unit owner = bulletComponent?.OwnerUnit;
+                if (owner == null || owner.Id == unitA.Id)
+                {
+                    return;
+                }
+
+                ResolveBulletHit(unitB, unitA, bulletComponent, owner);
+                scene.GetComponent<UnitComponent>()?.Remove(unitB.Id);
             }//玩家跟玩家碰撞，判定玩家重量大小，大吃小
             else if(unitA.Type() == EUnitType.Player && unitB.Type() == EUnitType.Player)
             {
@@ -36,6 +51,36 @@ namespace ET
             }
 
             await ETTask.CompletedTask;
+        }
+
+        private static bool IsCombatUnit(Unit unit)
+        {
+            if (unit == null || unit.IsDisposed)
+            {
+                return false;
+            }
+
+            EUnitType unitType = unit.Type();
+            return unitType == EUnitType.Player || unitType == EUnitType.Monster;
+        }
+
+        private static void ResolveBulletHit(Unit bulletUnit, Unit target, BulletComponent bulletComponent, Unit owner)
+        {
+            if (bulletUnit == null || target == null || bulletComponent == null)
+            {
+                return;
+            }
+
+            if (bulletComponent.HitActionEventIds == null || bulletComponent.HitActionEventIds.Count == 0)
+            {
+                BattleHelper.HitSettle(owner, target, EHitFromType.Skill_Bullet, bulletUnit);
+                return;
+            }
+
+            for (int index = 0; index < bulletComponent.HitActionEventIds.Count; ++index)
+            {
+                bulletComponent.CreateActionEvent(bulletComponent.HitActionEventIds[index], target);
+            }
         }
     }
 }

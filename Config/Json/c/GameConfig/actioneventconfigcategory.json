@@ -1,22 +1,136 @@
 [
   {
     "Id": 1,
-    "Name": "normal bullet",
-    "Desc": "emit a bullet",
+    "Name": "range_damage",
+    "Desc": "range damage around owner",
     "ActionEventType": 1,
     "IsClientOnly": false,
-    "Params": [
-      2000
-    ]
+    "EventData": {
+      "$type": "RangeDamageActionEventData",
+      "Radius": 2000
+    }
   },
   {
     "Id": 2,
-    "Name": "normal bullet",
-    "Desc": "emit a bullet",
+    "Name": "basic_bullet",
+    "Desc": "single projectile without on-hit events",
     "ActionEventType": 2,
     "IsClientOnly": false,
-    "Params": [
-      5001
-    ]
+    "EventData": {
+      "$type": "BulletActionEventData",
+      "BulletConfigId": 5001,
+      "Speed": 10000,
+      "LifeMs": 1000,
+      "Radius": 200,
+      "Count": 1,
+      "SpreadAngleDeg": 0,
+      "HitActionEventIds": []
+    }
+  },
+  {
+    "Id": 3,
+    "Name": "bullet_hit_damage",
+    "Desc": "projectile hit damage",
+    "ActionEventType": 7,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "ChangeNumericActionEventData",
+      "NumericType": 1001,
+      "Delta": -15,
+      "TargetRule": 3,
+      "InterruptLevel": 1
+    }
+  },
+  {
+    "Id": 4,
+    "Name": "bullet_hit_mark",
+    "Desc": "apply mark buff on hit",
+    "ActionEventType": 3,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "AddBuffActionEventData",
+      "BuffId": 8001,
+      "TargetRule": 3
+    }
+  },
+  {
+    "Id": 5,
+    "Name": "projectile_damage_and_mark_x1",
+    "Desc": "1 projectile with on-hit damage and mark",
+    "ActionEventType": 2,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "BulletActionEventData",
+      "BulletConfigId": 5001,
+      "Speed": 12000,
+      "LifeMs": 1200,
+      "Radius": 350,
+      "Count": 1,
+      "SpreadAngleDeg": 0,
+      "HitActionEventIds": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "Id": 6,
+    "Name": "projectile_damage_and_mark_x2",
+    "Desc": "2 projectiles with on-hit damage and mark",
+    "ActionEventType": 2,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "BulletActionEventData",
+      "BulletConfigId": 5001,
+      "Speed": 12000,
+      "LifeMs": 1200,
+      "Radius": 350,
+      "Count": 2,
+      "SpreadAngleDeg": 8,
+      "HitActionEventIds": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "Id": 7,
+    "Name": "projectile_damage_and_mark_x3",
+    "Desc": "3 projectiles with on-hit damage and mark",
+    "ActionEventType": 2,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "BulletActionEventData",
+      "BulletConfigId": 5001,
+      "Speed": 12000,
+      "LifeMs": 1200,
+      "Radius": 350,
+      "Count": 3,
+      "SpreadAngleDeg": 18,
+      "HitActionEventIds": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "Id": 8,
+    "Name": "projectile_damage_and_mark_x4",
+    "Desc": "4 projectiles with on-hit damage and mark",
+    "ActionEventType": 2,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "BulletActionEventData",
+      "BulletConfigId": 5001,
+      "Speed": 12000,
+      "LifeMs": 1200,
+      "Radius": 350,
+      "Count": 4,
+      "SpreadAngleDeg": 30,
+      "HitActionEventIds": [
+        3,
+        4
+      ]
+    }
   }
 ]

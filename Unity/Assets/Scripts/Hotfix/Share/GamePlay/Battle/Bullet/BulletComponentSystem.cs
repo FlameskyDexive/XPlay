@@ -13,20 +13,43 @@ namespace ET
         [EntitySystem]
         public static void Destroy(this BulletComponent self)
         {
-            
+            self.HitActionEventIds.Clear();
         }
         [EntitySystem]
         public static void Awake(this BulletComponent self)
         {
-            //测试子弹，生存时间700ms
-            self.EndTime = TimeInfo.Instance.ServerNow() + 1000;
-
+            self.EndTime = long.MaxValue;
         }
 
         public static void Init(this BulletComponent self, Skill skill, Unit owner)
         {
+            self.Init(skill, owner, null, 1000);
+        }
+
+        public static void Init(this BulletComponent self, Skill skill, Unit owner, List<int> hitActionEventIds)
+        {
+            self.Init(skill, owner, hitActionEventIds, 1000);
+        }
+
+        public static void Init(this BulletComponent self, Skill skill, Unit owner, List<int> hitActionEventIds, int lifeMs)
+        {
             self.OwnerSkill = skill;
             self.OwnerUnit = owner;
+            self.EndTime = TimeInfo.Instance.ServerNow() + (lifeMs > 0 ? lifeMs : 1000);
+            self.HitActionEventIds.Clear();
+            if (hitActionEventIds == null || hitActionEventIds.Count == 0)
+            {
+                return;
+            }
+
+            for (int index = 0; index < hitActionEventIds.Count; ++index)
+            {
+                int actionEventId = hitActionEventIds[index];
+                if (actionEventId > 0)
+                {
+                    self.HitActionEventIds.Add(actionEventId);
+                }
+            }
         }
 
         /// <summary>

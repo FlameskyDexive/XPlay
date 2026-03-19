@@ -30,9 +30,10 @@ namespace ET
             self.Blackboard.Set(BTCombatBlackboardKeys.IsDead, isDead);
             self.Blackboard.Set(BTCombatBlackboardKeys.HpRatio, GetHpRatio(unit));
 
+            CombatStateComponent combatStateComponent = unit.GetComponent<CombatStateComponent>();
             SkillCastComponent skillCastComponent = unit.GetComponent<SkillCastComponent>();
             self.Blackboard.Set(BTCombatBlackboardKeys.InCast, skillCastComponent != null && skillCastComponent.IsCasting());
-            self.Blackboard.Set(BTCombatBlackboardKeys.InControl, false);
+            self.Blackboard.Set(BTCombatBlackboardKeys.InControl, combatStateComponent != null && combatStateComponent.IsInControl());
         }
 
         public static void SetCombatTarget(this BTExecutionContext self, Unit unit, Unit target)

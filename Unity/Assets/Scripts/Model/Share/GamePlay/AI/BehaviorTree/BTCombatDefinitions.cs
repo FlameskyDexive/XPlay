@@ -5,12 +5,15 @@ namespace ET
         public const string FindCombatTarget = "combat.action.find_target";
         public const string ValidateCombatTarget = "combat.condition.validate_target";
         public const string ClearInvalidTarget = "combat.action.clear_invalid_target";
+        public const string StopMove = "combat.action.stop_move";
         public const string MoveToCombatRange = "combat.action.move_to_range";
+        public const string RetreatFromCombatTarget = "combat.action.retreat_from_target";
         public const string FaceTarget = "combat.action.face_target";
         public const string SelectSkill = "combat.action.select_skill";
         public const string CanCastSelectedSkill = "combat.condition.can_cast_selected_skill";
         public const string CastSelectedSkill = "combat.action.cast_selected_skill";
         public const string WaitCastComplete = "combat.action.wait_cast_complete";
+        public const string InControl = "combat.condition.in_control";
         public const string NeedRetreat = "combat.condition.need_retreat";
     }
 

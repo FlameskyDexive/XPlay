@@ -1,191 +1,210 @@
-# et-excel - Excel 操作专家
+# et-excel - Excel 配置编辑规范
 
-这个 skill 专门负责 Excel 文件的读写、格式化、图表等操作。使用 CLI 模式调用 ET.ExcelMcp 工具。
+这个 skill 用于在本项目里通过 `ET.ExcelMcp` 安全地读写 Excel 配置表。
 
-## 使用场景
+适用场景：
+- 新增/修改配置表数据
+- 修复表格中的中文乱码
+- 批量更新单元格、表头、注释、描述
+- 新建配置表并接入 `__tables__.xlsx`
 
-- 创建/读取 Excel 文件
-- 单元格读写操作
-- 批量数据导入导出
-- 设置单元格样式和格式
-- 添加图表、公式
-- 数据筛选、排序
-- 合并单元格
-- 添加数据验证
+---
 
-## 命令行调用格式
+## 核心原则
 
-```bash
-dotnet Bin/ET.ExcelMcp.dll cli <工具名> '<JSON参数>'
+1. 涉及 Excel 配置修改时，优先使用 `ET.ExcelMcp`
+2. 写入中文时，必须避免让 PowerShell 直接承载原始中文参数
+3. 修改配置表后，要按需导出受影响的配置数据/代码
+4. 不能只看终端输出判断是否乱码，必要时要检查 `xlsx` 原始内容
+
+---
+
+## 这次乱码问题的根因
+
+在 Windows PowerShell 环境里，如果把中文直接写进命令字符串、here-string 或 JSON 字符串，再传给 `ET.ExcelMcp`，中文可能先被控制台代码页污染，变成 `?`，最终被真实写进 Excel。
+
+也就是说：
+- 有时候不是 `ET.ExcelMcp` 写坏了
+- 而是中文在进入 `ET.ExcelMcp` 之前，就已经被 PowerShell 破坏了
+
+典型错误做法：
+- 在 `powershell.exe -Command "...中文..."` 里直接拼中文 JSON
+- 在 PowerShell here-string 里直接写中文，再传给 CLI
+- 只根据控制台打印结果判断 Excel 是否已经写对
+
+---
+
+## 正确写法
+
+### 方案一：推荐方案
+
+用 Python 包一层调用 `ET.ExcelMcp`，并在 Python 内部构造 UTF-8 字符串后再传给 CLI。
+
+推荐模式：
+
+```powershell
+@'
+import subprocess, json
+payload = {
+    "operation": "batch_write",
+    "path": "Unity/Assets/Config/Excel/Datas/SomeConfig.xlsx",
+    "data": [
+        {"cell": "B3", "value": "配置ID"},
+        {"cell": "C3", "value": "生命值"}
+    ]
+}
+cmd = [
+    'dotnet', r'.\Bin\ET.ExcelMcp.dll',
+    'cli', 'excel_data_operations',
+    json.dumps(payload, ensure_ascii=False)
+]
+res = subprocess.run(cmd, capture_output=True)
+print(res.stdout.decode('utf-8', 'ignore'), end='')
+print(res.stderr.decode('utf-8', 'ignore'), end='')
+raise SystemExit(res.returncode)
+'@ | python -
 ```
 
-### 查看所有可用工具
+### 方案二：最稳妥的中文写法
 
-```bash
-dotnet Bin/ET.ExcelMcp.dll cli list
+如果当前 shell/终端环境不可靠，不要把中文直接写进脚本字面量。
+可以先写 ASCII 安全的 `\uXXXX`，再在 Python 里转成真正的 Unicode：
+
+```powershell
+@'
+import subprocess, json
+u = lambda s: s.encode('ascii').decode('unicode_escape')
+
+payload = {
+    "operation": "batch_write",
+    "path": "Unity/Assets/Config/Excel/Datas/SomeConfig.xlsx",
+    "data": [
+        {"cell": "B3", "value": u('\\u914d\\u7f6eID')},
+        {"cell": "C3", "value": u('\\u751f\\u547d\\u503c')}
+    ]
+}
+
+cmd = [
+    'dotnet', r'.\Bin\ET.ExcelMcp.dll',
+    'cli', 'excel_data_operations',
+    json.dumps(payload, ensure_ascii=False)
+]
+res = subprocess.run(cmd, capture_output=True)
+print(res.stdout.decode('utf-8', 'ignore'), end='')
+print(res.stderr.decode('utf-8', 'ignore'), end='')
+raise SystemExit(res.returncode)
+'@ | python -
 ```
 
-### 查看某个工具的详细帮助
+这个方案在当前项目环境里是最可靠的中文修复方案。
 
-```bash
-dotnet Bin/ET.ExcelMcp.dll cli help <工具名>
+---
+
+## 工具选型建议
+
+### 1. 零散改单元格
+
+优先用：
+- `excel_cell`
+- `excel_data_operations` 的 `batch_write`
+
+适合：
+- 修正表头
+- 修正文案
+- 修正少量配置值
+
+### 2. 整块重写规则区域
+
+优先用：
+- `excel_range` 的 `write`
+
+适合：
+- 新建一整张配置表
+- 重写规则头（`##var / ##type / ##`）
+- 保证 used range 正确扩到新列
+
+### 3. 新增配置表
+
+必须同时处理：
+- 新建 `xxx.xlsx`
+- 在 `__tables__.xlsx` 注册 `Category / value_type / input / index / group`
+- 导出受影响的服务端/客户端配置
+
+---
+
+## 中文修复后的验证规范
+
+修改含中文的表格后，至少做下面两步之一：
+
+### 验证方式 A：再次用 `ET.ExcelMcp` 读回内容
+
+适合快速确认结构和值。
+
+### 验证方式 B：检查 `xlsx` 原始 `sharedStrings.xml`
+
+这是判断“有没有真的写成问号”的最可靠方法。
+
+示例：
+
+```powershell
+@'
+import zipfile, re
+path = 'Unity/Assets/Config/Excel/Datas/SomeConfig.xlsx'
+with zipfile.ZipFile(path, 'r') as zf:
+    data = zf.read('xl/sharedStrings.xml').decode('utf-8', 'ignore')
+    items = re.findall(r'<t[^>]*>(.*?)</t>', data)
+    print([ascii(x) for x in items[-20:]])
+'@ | python -
 ```
 
-## 常用工具和示例
+判断标准：
+- 如果看到 `\u751f\u547d\u503c` 这类转义，说明底层是正确中文
+- 如果看到 `????`，说明文件里真的已经坏了，需要重新写入
 
-### 1. 文件操作 (excel_file_operations)
+---
 
-```bash
-# 创建新 Excel 文件
-dotnet Bin/ET.ExcelMcp.dll cli excel_file_operations '{"operation":"create","path":"output.xlsx"}'
+## 配置变更后的导出要求
 
-# 转换为 CSV
-dotnet Bin/ET.ExcelMcp.dll cli excel_file_operations '{"operation":"convert","inputPath":"input.xlsx","outputPath":"output.csv","format":"csv"}'
-```
+修改 Excel 配置后，不要只改表，不导配置。
 
-### 2. 单元格操作 (excel_cell)
+至少导出受影响的配置：
+- `Config/Excel/s/GameConfig`
+- `Config/Json/s/GameConfig`
+- 如果客户端也依赖，再导出 `c/cs`
+- 如果新增字段/新表影响生成代码，还要重新生成 `Unity/Assets/Scripts/Model/Generate/...`
 
-```bash
-# 写入单元格
-dotnet Bin/ET.ExcelMcp.dll cli excel_cell '{"operation":"write","path":"test.xlsx","cell":"A1","value":"Hello"}'
+可优先做“定向导出”，避免全量导出带来的超时。
 
-# 读取单元格
-dotnet Bin/ET.ExcelMcp.dll cli excel_cell '{"operation":"get","path":"test.xlsx","cell":"A1"}'
+---
 
-# 清空单元格
-dotnet Bin/ET.ExcelMcp.dll cli excel_cell '{"operation":"clear","path":"test.xlsx","cell":"A1"}'
-```
+## 本项目里的执行约束
 
-### 3. 批量数据操作 (excel_data_operations)
+1. 命令必须通过 PowerShell 发起
+2. 但中文内容不要直接依赖 PowerShell 字面量传递
+3. 优先采用：`PowerShell -> Python -> ET.ExcelMcp`
+4. 写中文后必须做读回或原始 XML 验证
+5. 新增配置表时，必须同步注册 `__tables__.xlsx`
 
-```bash
-# 批量写入
-dotnet Bin/ET.ExcelMcp.dll cli excel_data_operations '{"operation":"batch_write","path":"test.xlsx","data":[{"cell":"A1","value":"姓名"},{"cell":"B1","value":"年龄"}]}'
+---
 
-# 读取范围内容
-dotnet Bin/ET.ExcelMcp.dll cli excel_data_operations '{"operation":"get_content","path":"test.xlsx","range":"A1:C10"}'
+## 推荐工作流
 
-# 排序
-dotnet Bin/ET.ExcelMcp.dll cli excel_data_operations '{"operation":"sort","path":"test.xlsx","range":"A1:C10","sortColumn":0,"ascending":true}'
-```
+1. 先确认要改的是哪张表、哪个范围
+2. 通过 `ET.ExcelMcp` 读取现状
+3. 用 Python 包装 `ET.ExcelMcp` 写入
+4. 对中文内容做二次验证
+5. 导出受影响的配置代码/数据
+6. 运行 `dotnet build ET.sln` 验证代码侧是否正常
 
-### 4. 范围操作 (excel_range)
+---
 
-```bash
-# 批量写入二维数据
-dotnet Bin/ET.ExcelMcp.dll cli excel_range '{"operation":"write","path":"test.xlsx","range":"A1:B2","data":[["A","B"],["C","D"]]}'
+## 结论
 
-# 复制范围
-dotnet Bin/ET.ExcelMcp.dll cli excel_range '{"operation":"copy","path":"test.xlsx","sourceRange":"A1:B2","destRange":"D1"}'
-```
+以后在这个项目里，只要是“Excel 表格 + 中文写入”：
 
-### 5. 样式操作 (excel_style)
+- 不要把中文直接塞进 PowerShell 命令字符串
+- 一律优先用 `Python -> ET.ExcelMcp` 的方式写入
+- 必要时用 `\uXXXX -> unicode_escape` 转换
+- 写完后检查 `sharedStrings.xml`，不要只信终端输出
 
-```bash
-# 设置样式（加粗、背景色、字体颜色）
-dotnet Bin/ET.ExcelMcp.dll cli excel_style '{"operation":"format","path":"test.xlsx","range":"A1:C1","bold":true,"backgroundColor":"#4472C4","fontColor":"#FFFFFF"}'
-
-# 获取样式
-dotnet Bin/ET.ExcelMcp.dll cli excel_style '{"operation":"get_format","path":"test.xlsx","range":"A1"}'
-```
-
-### 6. 公式操作 (excel_formula)
-
-```bash
-# 添加公式
-dotnet Bin/ET.ExcelMcp.dll cli excel_formula '{"operation":"add","path":"test.xlsx","cell":"B5","formula":"=SUM(B1:B4)"}'
-
-# 获取公式计算结果
-dotnet Bin/ET.ExcelMcp.dll cli excel_formula '{"operation":"get_result","path":"test.xlsx","cell":"B5"}'
-```
-
-### 7. 图表操作 (excel_chart)
-
-```bash
-# 添加柱状图
-dotnet Bin/ET.ExcelMcp.dll cli excel_chart '{"operation":"add","path":"test.xlsx","chartType":"Column","dataRange":"B1:B10","categoryAxisDataRange":"A1:A10","title":"销售数据"}'
-```
-
-### 8. 工作表操作 (excel_sheet)
-
-```bash
-# 创建新工作表
-dotnet Bin/ET.ExcelMcp.dll cli excel_sheet '{"operation":"create","path":"test.xlsx","sheetName":"NewSheet"}'
-
-# 列出所有工作表
-dotnet Bin/ET.ExcelMcp.dll cli excel_sheet '{"operation":"list","path":"test.xlsx"}'
-
-# 重命名工作表
-dotnet Bin/ET.ExcelMcp.dll cli excel_sheet '{"operation":"rename","path":"test.xlsx","sheetIndex":0,"newName":"Summary"}'
-```
-
-### 9. 合并单元格 (excel_merge_cells)
-
-```bash
-# 合并单元格
-dotnet Bin/ET.ExcelMcp.dll cli excel_merge_cells '{"operation":"merge","path":"test.xlsx","range":"A1:C1"}'
-
-# 取消合并
-dotnet Bin/ET.ExcelMcp.dll cli excel_merge_cells '{"operation":"unmerge","path":"test.xlsx","range":"A1:C1"}'
-```
-
-### 10. 行列操作 (excel_row_column)
-
-```bash
-# 插入行
-dotnet Bin/ET.ExcelMcp.dll cli excel_row_column '{"operation":"insert_rows","path":"test.xlsx","startRow":2,"count":3}'
-
-# 设置行高列宽
-dotnet Bin/ET.ExcelMcp.dll cli excel_row_column '{"operation":"set_size","path":"test.xlsx","rowIndex":1,"rowHeight":30,"columnIndex":1,"columnWidth":20}'
-
-# 自动调整列宽
-dotnet Bin/ET.ExcelMcp.dll cli excel_row_column '{"operation":"auto_fit","path":"test.xlsx","columns":[1,2,3]}'
-```
-
-## 完整工具列表
-
-| 工具名 | 功能 |
-|--------|------|
-| excel_file_operations | 文件创建、转换 |
-| excel_cell | 单元格读写 |
-| excel_data_operations | 批量数据、排序、统计 |
-| excel_range | 范围操作、复制移动 |
-| excel_style | 样式格式化 |
-| excel_formula | 公式管理 |
-| excel_chart | 图表操作 |
-| excel_sheet | 工作表管理 |
-| excel_merge_cells | 合并单元格 |
-| excel_row_column | 行列插入删除 |
-| excel_filter | 数据筛选 |
-| excel_data_validation | 数据验证 |
-| excel_conditional_formatting | 条件格式 |
-| excel_hyperlink | 超链接 |
-| excel_comment | 批注 |
-| excel_image | 图片 |
-| excel_named_range | 命名范围 |
-| excel_pivot_table | 数据透视表 |
-| excel_freeze_panes | 冻结窗格 |
-| excel_group | 行列分组 |
-| excel_protect | 保护设置 |
-| excel_properties | 文档属性 |
-| excel_print_settings | 打印设置 |
-| excel_view_settings | 视图设置 |
-| excel_get_cell_address | 地址转换 |
-
-## 注意事项
-
-1. **路径**：建议使用绝对路径，避免相对路径问题
-2. **JSON 转义**：在 shell 中使用单引号包裹 JSON，内部使用双引号
-3. **中文支持**：完全支持中文内容读写
-4. **sheetIndex**：工作表索引从 0 开始
-5. **outputPath**：写操作可指定输出路径，默认覆盖原文件
-
-## 工作流程
-
-当用户需要操作 Excel 时：
-
-1. 确认操作类型（读/写/格式化/图表等）
-2. 选择合适的工具
-3. 构建 JSON 参数
-4. 执行 CLI 命令
-5. 检查输出结果
+这条规范是为了避免再次出现中文被写成 `?` 的问题。

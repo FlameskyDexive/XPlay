@@ -1,0 +1,22 @@
+[
+  {
+    "Id": 1,
+    "SceneName": "Map1",
+    "UnitConfigId": 3001,
+    "SpawnX": -4,
+    "SpawnY": 0,
+    "SpawnZ": -4,
+    "Count": 1,
+    "BehaviorTreeName": "AITest",
+    "SkillIds": [
+      1001
+    ],
+    "OffsetX": 2,
+    "OffsetY": 0,
+    "OffsetZ": 0,
+    "SpawnOnce": true,
+    "Hp": 120,
+    "Attack": 8,
+    "Speed": 4
+  }
+]

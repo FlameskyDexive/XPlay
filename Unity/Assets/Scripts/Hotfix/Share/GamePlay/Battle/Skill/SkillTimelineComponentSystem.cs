@@ -29,7 +29,7 @@ namespace ET
                 {
                     ActionEvent actionEvent = (ActionEvent)value;
 
-                    if (timeNow > actionEvent.EventTriggerTime)
+                    if (timeNow >= actionEvent.EventTriggerTime)
                     {
                         ActionEventComponent.Instance.Run(actionEvent,
                             new ActionEventData() { actionEventType = actionEvent.ActionEventType, owner = actionEvent.OwnerUnit });
@@ -74,31 +74,35 @@ namespace ET
 
         public static void InitEvents(this SkillTimelineComponent self)
         {
-            try
+            if (self.Skillconfig?.ActionEventIds == null || self.Skillconfig.ActionEventTriggerPercent == null)
             {
-                for (int i = 0; i < self.Skillconfig.ActionEventIds.Count; i++)
+                return;
+            }
+
+            int eventCount = Math.Min(self.Skillconfig.ActionEventIds.Count, self.Skillconfig.ActionEventTriggerPercent.Count);
+            if (eventCount != self.Skillconfig.ActionEventIds.Count || eventCount != self.Skillconfig.ActionEventTriggerPercent.Count)
+            {
+                Log.Warning($"技能事件配置数量不一致，技能id:{self.Skillconfig.Id}, lv:{self.Skillconfig.Level}, ids:{self.Skillconfig.ActionEventIds.Count}, percents:{self.Skillconfig.ActionEventTriggerPercent.Count}");
+            }
+
+            for (int index = 0; index < eventCount; ++index)
+            {
+                int actionEventId = self.Skillconfig.ActionEventIds[index];
+                ActionEventConfig actionEventConfig = ActionEventConfigCategory.Instance.GetOrDefault(actionEventId);
+                if (actionEventConfig == null)
                 {
-                    int actionEventId = self.Skillconfig.ActionEventIds[i];
-                    ActionEventConfig actionEventConfig = ActionEventConfigCategory.Instance.Get(actionEventId);
-                    if (actionEventConfig == null)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
 #if DOTNET
-                    if (actionEventConfig.IsClientOnly)
-                    {
-                        continue;
-                    }
+                if (actionEventConfig.IsClientOnly)
+                {
+                    continue;
+                }
 #endif
 
-                    int triggerTime = self.Skillconfig.ActionEventTriggerPercent[i] * self.Skillconfig.Life / 100;
-                    self.AddChild<ActionEvent, int, int, EActionEventSourceType>(actionEventId, triggerTime, EActionEventSourceType.Skill);
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error($"事件id与事件触发时间百分比数量不一致， 技能id：{self.Skillconfig.Id}, lv:{self.Skillconfig.Level} \n{e}");
+                int triggerTime = self.Skillconfig.ActionEventTriggerPercent[index] * self.Skillconfig.Life / 100;
+                self.AddChild<ActionEvent, int, int, EActionEventSourceType>(actionEventId, triggerTime, EActionEventSourceType.Skill);
             }
         }
 

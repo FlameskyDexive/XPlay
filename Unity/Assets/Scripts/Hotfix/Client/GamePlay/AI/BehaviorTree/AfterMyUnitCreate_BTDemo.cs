@@ -19,7 +19,55 @@ namespace ET.Client
                 return;
             }
 
-            byte[] behaviorTreeBytes = await BTLoader.Instance.LoadBytesAsync("AITest");
+            AttachAITest(unit);
+
+            await ETTask.CompletedTask;
+        }
+
+        private static void AttachAITest(Unit unit)
+        {
+            if (unit == null || unit.IsDisposed)
+            {
+                return;
+            }
+
+            byte[] behaviorTreeBytes = BTClientDemoFactory.CreateAITestBytes();
+            if (behaviorTreeBytes == null || behaviorTreeBytes.Length == 0)
+            {
+                return;
+            }
+
+            BTComponent behaviorTreeComponent = unit.GetComponent<BTComponent>();
+            if (behaviorTreeComponent == null)
+            {
+                unit.AddComponent<BTComponent, byte[], string>(behaviorTreeBytes, "AITest");
+                return;
+            }
+
+            behaviorTreeComponent.Reload(behaviorTreeBytes, "AITest");
+        }
+    }
+
+    [Event(SceneType.Current)]
+    public class AfterUnitCreate_BTDemoCombatAI : AEvent<Scene, AfterUnitCreate>
+    {
+        protected override async ETTask Run(Scene scene, AfterUnitCreate args)
+        {
+            Scene root = scene.Root();
+            if (root.SceneType != SceneType.Demo)
+            {
+                await ETTask.CompletedTask;
+                return;
+            }
+
+            Unit unit = args.Unit;
+            if (unit == null || unit.IsDisposed || unit.Type() != EUnitType.Monster)
+            {
+                await ETTask.CompletedTask;
+                return;
+            }
+
+            byte[] behaviorTreeBytes = BTClientDemoFactory.CreateAITestBytes();
             if (behaviorTreeBytes == null || behaviorTreeBytes.Length == 0)
             {
                 await ETTask.CompletedTask;

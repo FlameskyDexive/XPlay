@@ -37,16 +37,17 @@ namespace ET
         [EntitySystem]
         public static void FixedUpdate(this Buff self)
         {
-            if (TimeInfo.Instance.ServerNow() > self.StartTime + self.BuffConfig.Duration)
+            long now = TimeInfo.Instance.ServerNow();
+            if (now > self.StartTime + self.BuffConfig.Duration)
             {
                 self.LifeTimeout();
                 return;
             }
 
-            if (TimeInfo.Instance.ServerNow() > self.NextTriggerTime)
+            if (self.BuffConfig.TriggerInterval > 0 && now >= self.NextTriggerTime)
             {
                 self.TriggerBuff();
-                self.NextTriggerTime = TimeInfo.Instance.ServerNow() + self.BuffConfig.TriggerInterval;
+                self.NextTriggerTime = now + self.BuffConfig.TriggerInterval;
             }
         }
 
@@ -56,7 +57,7 @@ namespace ET
             --self.LayerCount;
             if (self.LayerCount > 0)
             {
-                self.InitBuff();
+                self.RefreshDuration();
                 return;
             }
             //移除Buff
@@ -65,17 +66,23 @@ namespace ET
         public static void InitBuff(this Buff self)
         {
 
-            if (self.BuffConfig?.EndEvents?.Count > 0)
+            if (self.BuffConfig?.StartEvents?.Count > 0)
             {
                 foreach (int eventId in self.BuffConfig.StartEvents)
                 {
                     self.CreateActionEvent(eventId);
                 }
             }
-            //初始默认触发一次buff效果
-            // self.TriggerBuff();
+
+            self.RefreshDuration();
+        }
+
+        public static void RefreshDuration(this Buff self)
+        {
             self.StartTime = TimeInfo.Instance.ServerNow();
-            self.NextTriggerTime = self.StartTime + self.BuffConfig.TriggerInterval;
+            self.NextTriggerTime = self.BuffConfig.TriggerInterval > 0
+                ? self.StartTime + self.BuffConfig.TriggerInterval
+                : long.MaxValue;
         }
 
         /// <summary>
@@ -108,7 +115,7 @@ namespace ET
 
         public static Unit GetOwnerUnit(this Buff self)
         {
-            return self.GetParent<Unit>();
+            return self.Unit;
         }
         
     }

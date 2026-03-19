@@ -35,8 +35,8 @@ namespace ET
                 return false;
             }
 
-            SkillComponent skillComponent = target.GetComponent<SkillComponent>();
-            if (skillComponent != null && skillComponent.IsDead())
+            NumericComponent numericComponent = target.GetComponent<NumericComponent>();
+            if (numericComponent != null && numericComponent.GetAsInt(NumericType.Hp) <= 0)
             {
                 return false;
             }

@@ -21,20 +21,34 @@ namespace ET
                 switch (this.SourceType)
                 {
                     case EActionEventSourceType.Skill:
-                        return this.GetParent<SkillTimelineComponent>().Unit;
+                        return this.GetParent<SkillTimelineComponent>()?.Unit;
                     case EActionEventSourceType.Buff:
-                        return this.GetParent<SkillTimelineComponent>().Unit;
+                        return this.GetParent<Buff>()?.Unit;
                     case EActionEventSourceType.Bullet:
-                        return this.GetParent<SkillTimelineComponent>().Unit;
+                        return this.GetParent<BulletComponent>()?.OwnerUnit;
                 }
                 
-                return this.GetParent<SkillTimelineComponent>().Unit;
+                return null;
             }
         }
 
-        public Skill OwnerSkill => this.GetParent<SkillTimelineComponent>().GetParent<Skill>();
+        public Skill OwnerSkill
+        {
+            get
+            {
+                switch (this.SourceType)
+                {
+                    case EActionEventSourceType.Skill:
+                        return this.GetParent<SkillTimelineComponent>()?.GetParent<Skill>();
+                    case EActionEventSourceType.Bullet:
+                        return this.GetParent<BulletComponent>()?.OwnerSkill;
+                    default:
+                        return null;
+                }
+            }
+        }
 
-        public SkillConfig SkillConfig => this.OwnerSkill.SkillConfig;
+        public SkillConfig SkillConfig => this.OwnerSkill?.SkillConfig;
 
         public EActionEventSourceType SourceType;
 

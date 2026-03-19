@@ -138,6 +138,11 @@ namespace ET
                 request.AimDirection = self.Unit.Forward;
             }
 
+            if (skillCastComponent.IsCasting())
+            {
+                return skillCastComponent.TryQueueCast(skill, request, out result);
+            }
+
             return skillCastComponent.TryStartCast(skill, request, out result);
         }
 

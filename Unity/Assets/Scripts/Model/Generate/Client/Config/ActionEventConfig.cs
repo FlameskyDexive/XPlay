@@ -23,7 +23,7 @@ public sealed partial class ActionEventConfig: Bright.Config.BeanBase
         Desc = _buf.ReadString();
         ActionEventType = (EActionEventType)_buf.ReadInt();
         IsClientOnly = _buf.ReadBool();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Params = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Params.Add(_e0);}}
+        EventData = ActionEventBaseData.DeserializeActionEventBaseData(_buf);
         PostInit();
     }
 
@@ -53,20 +53,22 @@ public sealed partial class ActionEventConfig: Bright.Config.BeanBase
     /// </summary>
     public bool IsClientOnly { get; private set; }
     /// <summary>
-    /// 参数
+    /// EventData polymorphic bean range
     /// </summary>
-    public System.Collections.Generic.List<int> Params { get; private set; }
+    public ActionEventBaseData EventData { get; private set; }
 
     public const int __ID__ = 424251974;
     public override int GetTypeId() => __ID__;
 
     public  void Resolve(ConcurrentDictionary<Type, IConfigSingleton> _tables)
     {
+        EventData?.Resolve(_tables);
         PostResolve();
     }
 
     public  void TranslateText(System.Func<string, string, string> translator)
     {
+        EventData?.TranslateText(translator);
     }
 
     public override string ToString()
@@ -77,7 +79,7 @@ public sealed partial class ActionEventConfig: Bright.Config.BeanBase
         + "Desc:" + Desc + ","
         + "ActionEventType:" + ActionEventType + ","
         + "IsClientOnly:" + IsClientOnly + ","
-        + "Params:" + Bright.Common.StringUtil.CollectionToString(Params) + ","
+        + "EventData:" + EventData + ","
         + "}";
     }
     

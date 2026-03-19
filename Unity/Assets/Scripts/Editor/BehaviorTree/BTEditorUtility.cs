@@ -707,9 +707,19 @@ namespace ET
                 return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTClearInvalidTarget");
             }
 
+            if (string.Equals(nodeTypeId, "combat.action.stop_move", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTStopMove");
+            }
+
             if (string.Equals(nodeTypeId, "combat.action.move_to_range", StringComparison.OrdinalIgnoreCase))
             {
                 return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTMoveToCombatRange");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.action.retreat_from_target", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTRetreatFromCombatTarget");
             }
 
             if (string.Equals(nodeTypeId, "combat.action.face_target", StringComparison.OrdinalIgnoreCase))
@@ -760,6 +770,11 @@ namespace ET
             if (string.Equals(nodeTypeId, "combat.condition.can_cast_selected_skill", StringComparison.OrdinalIgnoreCase))
             {
                 return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTCanCastSelectedSkill");
+            }
+
+            if (string.Equals(nodeTypeId, "combat.condition.in_control", StringComparison.OrdinalIgnoreCase))
+            {
+                return BTEditorRuntimeBridge.ResolveRuntimeType("ET.BTInControl");
             }
 
             if (string.Equals(nodeTypeId, "combat.condition.need_retreat", StringComparison.OrdinalIgnoreCase))

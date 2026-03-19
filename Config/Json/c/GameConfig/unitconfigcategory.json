@@ -58,5 +58,15 @@
     },
     "Position": 4,
     "Height": 278
+  },
+  {
+    "Id": 3001,
+    "Type": 2,
+    "Name": {
+      "key": "UnitConfig.Name.3001",
+      "text": "训练假人"
+    },
+    "Position": 5,
+    "Height": 180
   }
 ]
