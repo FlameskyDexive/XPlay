@@ -118,5 +118,39 @@
     "ActionEventTriggerPercent": [
       10
     ]
+  },
+  {
+    "Id": 1003,
+    "Level": 1,
+    "AbstractType": 2,
+    "Name": "目标霸体",
+    "Desc": "给当前目标施加霸体Buff，用于验证标签阻断",
+    "Life": 1000,
+    "CD": 2000,
+    "ActionEventIds": [
+      13
+    ],
+    "ActionEventTriggerPercent": [
+      10
+    ]
+  },
+  {
+    "Id": 1004,
+    "Level": 1,
+    "AbstractType": 2,
+    "Name": "状态连击",
+    "Desc": "依次对当前目标施加沉默、眩晕并在后续驱散眩晕",
+    "Life": 1200,
+    "CD": 2500,
+    "ActionEventIds": [
+      9,
+      11,
+      12
+    ],
+    "ActionEventTriggerPercent": [
+      10,
+      40,
+      80
+    ]
   }
 ]

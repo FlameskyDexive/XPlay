@@ -3,248 +3,426 @@
     "Id": 8001,
     "Name": "测试-标记buff",
     "Desc": "纯标记",
-    "StartEvents": [],
-    "EndEvents": [],
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "NoopBuffModifierData"
+    },
     "Duration": 15000,
     "TriggerInterval": 0,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 0
+    "Goup": 0,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8002,
     "Name": "测试-加攻击%",
     "Desc": "攻击+50%",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      5000
-    ],
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "ChangeNumericBuffModifierData",
+      "NumericType": 10113,
+      "Delta": 500000
+    },
     "Duration": 10000,
     "TriggerInterval": 0,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 0
+    "Goup": 0,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8003,
     "Name": "测试-加攻击",
     "Desc": "攻击+100",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      100
-    ],
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "ChangeNumericBuffModifierData",
+      "NumericType": 10112,
+      "Delta": 100
+    },
     "Duration": 12000,
     "TriggerInterval": 0,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 1
+    "Goup": 1,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8004,
     "Name": "测试-加攻击",
     "Desc": "攻击+200",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      200
-    ],
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "ChangeNumericBuffModifierData",
+      "NumericType": 10112,
+      "Delta": 200
+    },
     "Duration": 12000,
     "TriggerInterval": 0,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 1
+    "Goup": 1,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8005,
     "Name": "测试-减攻击",
     "Desc": "攻击-100",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      -100
-    ],
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "ChangeNumericBuffModifierData",
+      "NumericType": 10112,
+      "Delta": -100
+    },
     "Duration": 10000,
     "TriggerInterval": 0,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 2
+    "Goup": 2,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8006,
     "Name": "测试-减攻击",
     "Desc": "攻击-300",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      -300
-    ],
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "ChangeNumericBuffModifierData",
+      "NumericType": 10112,
+      "Delta": -300
+    },
     "Duration": 10000,
     "TriggerInterval": 0,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 2
+    "Goup": 2,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8007,
     "Name": "测试-加速",
-    "Desc": "速度+50",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      50
-    ],
+    "Desc": "速度+50%",
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "ChangeNumericBuffModifierData",
+      "NumericType": 10003,
+      "Delta": 500000
+    },
     "Duration": 5000,
     "TriggerInterval": 0,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 0
+    "Goup": 0,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8008,
     "Name": "测试-减速%",
     "Desc": "速度-100%",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      -10000
-    ],
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "ChangeNumericBuffModifierData",
+      "NumericType": 10003,
+      "Delta": -1000000
+    },
     "Duration": 7500,
     "TriggerInterval": 0,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 0
+    "Goup": 0,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8009,
     "Name": "测试-持续伤害",
     "Desc": "500伤害/秒",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      500
-    ],
+    "EffectData": {
+      "$type": "ChangeNumericBuffEffectData",
+      "NumericType": 1001,
+      "Delta": -500,
+      "InterruptLevel": 0
+    },
+    "ModifierData": {
+      "$type": "NoopBuffModifierData"
+    },
     "Duration": 10000,
     "TriggerInterval": 1000,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 0
+    "Goup": 0,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8010,
     "Name": "测试-持续伤害%",
     "Desc": "血量上限5%伤害/5秒",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      500
-    ],
+    "EffectData": {
+      "$type": "RelativeNumericBuffEffectData",
+      "NumericType": 1001,
+      "BaseNumericType": 1002,
+      "Ratio": -500,
+      "InterruptLevel": 0
+    },
+    "ModifierData": {
+      "$type": "NoopBuffModifierData"
+    },
     "Duration": 25000,
     "TriggerInterval": 5000,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 0
+    "Goup": 0,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 1,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8011,
     "Name": "测试-持续回血",
     "Desc": "回复200点/3秒",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      200
-    ],
+    "EffectData": {
+      "$type": "ChangeNumericBuffEffectData",
+      "NumericType": 1001,
+      "Delta": 200,
+      "InterruptLevel": 0
+    },
+    "ModifierData": {
+      "$type": "NoopBuffModifierData"
+    },
     "Duration": 15000,
     "TriggerInterval": 3000,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 0
+    "Goup": 0,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8012,
     "Name": "测试-持续回血%",
     "Desc": "回复血量上限10%点/3秒",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      1000
-    ],
+    "EffectData": {
+      "$type": "RelativeNumericBuffEffectData",
+      "NumericType": 1001,
+      "BaseNumericType": 1002,
+      "Ratio": 1000,
+      "InterruptLevel": 0
+    },
+    "ModifierData": {
+      "$type": "NoopBuffModifierData"
+    },
     "Duration": 15000,
     "TriggerInterval": 3000,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 0
+    "Goup": 0,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 1,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8013,
     "Name": "测试-持续回护盾",
     "Desc": "加100盾/2秒",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      100
-    ],
+    "EffectData": {
+      "$type": "ChangeNumericBuffEffectData",
+      "NumericType": 1004,
+      "Delta": 100,
+      "InterruptLevel": 0
+    },
+    "ModifierData": {
+      "$type": "NoopBuffModifierData"
+    },
     "Duration": 10000,
     "TriggerInterval": 2000,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 0
+    "Goup": 0,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   },
   {
     "Id": 8014,
     "Name": "测试-持续回护盾%",
-    "Desc": "加10%盾/2秒",
-    "StartEvents": [
-      1001
-    ],
-    "EndEvents": [
-      1000
-    ],
+    "Desc": "加最大生命10%护盾/2秒",
+    "EffectData": {
+      "$type": "RelativeNumericBuffEffectData",
+      "NumericType": 1004,
+      "BaseNumericType": 1002,
+      "Ratio": 1000,
+      "InterruptLevel": 0
+    },
+    "ModifierData": {
+      "$type": "NoopBuffModifierData"
+    },
     "Duration": 10000,
     "TriggerInterval": 2000,
-    "TriggerEvents": [
-      0
-    ],
     "MaxLayer": 1,
-    "Goup": 0
+    "Goup": 0,
+    "AddPolicy": 2,
+    "SnapshotPolicy": 1,
+    "RemovePolicy": 0,
+    "TagGrantMask": 0,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
+  },
+  {
+    "Id": 8015,
+    "Name": "测试-沉默",
+    "Desc": "施加沉默，无法释放技能",
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "NoopBuffModifierData"
+    },
+    "Duration": 5000,
+    "TriggerInterval": 0,
+    "MaxLayer": 1,
+    "Goup": 0,
+    "AddPolicy": 0,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 0,
+    "TagGrantMask": 1,
+    "TagBlockMask": 0,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
+  },
+  {
+    "Id": 8016,
+    "Name": "测试-霸体",
+    "Desc": "施加霸体，驱散与普通移除都无效，仅自然到期",
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "NoopBuffModifierData"
+    },
+    "Duration": 4000,
+    "TriggerInterval": 0,
+    "MaxLayer": 1,
+    "Goup": 0,
+    "AddPolicy": 0,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 2,
+    "TagGrantMask": 8,
+    "TagBlockMask": 0,
+    "CanDispel": false,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
+  },
+  {
+    "Id": 8017,
+    "Name": "测试-眩晕",
+    "Desc": "施加强控；若目标已有霸体则阻止添加；只能驱散移除",
+    "EffectData": {
+      "$type": "NoopBuffEffectData"
+    },
+    "ModifierData": {
+      "$type": "NoopBuffModifierData"
+    },
+    "Duration": 2500,
+    "TriggerInterval": 0,
+    "MaxLayer": 1,
+    "Goup": 0,
+    "AddPolicy": 0,
+    "SnapshotPolicy": 0,
+    "RemovePolicy": 1,
+    "TagGrantMask": 4,
+    "TagBlockMask": 8,
+    "CanDispel": true,
+    "KeepOnDeath": false,
+    "PeriodicStartDelayMs": 0
   }
 ]

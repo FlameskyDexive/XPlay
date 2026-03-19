@@ -15,7 +15,7 @@ namespace ET
 {
 
 /// <summary>
-/// ????????
+/// range damage event bean
 /// </summary>
 public sealed partial class RangeDamageActionEventData:  ActionEventBaseData 
 {
@@ -31,7 +31,7 @@ public sealed partial class RangeDamageActionEventData:  ActionEventBaseData
     }
 
     /// <summary>
-    /// ????(??)
+    /// range radius in millimeters
     /// </summary>
     public int Radius { get; private set; }
 

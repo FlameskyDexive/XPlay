@@ -6,8 +6,14 @@
     "ActionEventType": 1,
     "IsClientOnly": false,
     "EventData": {
-      "$type": "RangeDamageActionEventData",
-      "Radius": 2000
+      "$type": "ShapeRangeDamageActionEventData",
+      "ColliderType": 1,
+      "Radius": 2000,
+      "Width": 0,
+      "Height": 0,
+      "ForwardOffset": 0,
+      "RightOffset": 0,
+      "ExtraAngleDeg": 0
     }
   },
   {
@@ -131,6 +137,66 @@
         3,
         4
       ]
+    }
+  },
+  {
+    "Id": 9,
+    "Name": "apply_silence_target",
+    "Desc": "apply silence buff to current target",
+    "ActionEventType": 3,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "AddBuffActionEventData",
+      "BuffId": 8015,
+      "TargetRule": 1
+    }
+  },
+  {
+    "Id": 10,
+    "Name": "apply_superarmor_self",
+    "Desc": "apply super armor buff to self",
+    "ActionEventType": 3,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "AddBuffActionEventData",
+      "BuffId": 8016,
+      "TargetRule": 0
+    }
+  },
+  {
+    "Id": 11,
+    "Name": "apply_stun_target",
+    "Desc": "apply stun buff to current target",
+    "ActionEventType": 3,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "AddBuffActionEventData",
+      "BuffId": 8017,
+      "TargetRule": 1
+    }
+  },
+  {
+    "Id": 12,
+    "Name": "dispel_stun_target",
+    "Desc": "dispel stun buff from current target",
+    "ActionEventType": 4,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "RemoveBuffActionEventData",
+      "BuffId": 8017,
+      "TargetRule": 1
+    }
+  },
+  {
+    "Id": 13,
+    "Name": "apply_superarmor_target",
+    "Desc": "apply super armor buff to current target",
+    "ActionEventType": 3,
+    "IsClientOnly": false,
+    "EventData": {
+      "$type": "AddBuffActionEventData",
+      "BuffId": 8016,
+      "TargetRule": 1
     }
   }
 ]

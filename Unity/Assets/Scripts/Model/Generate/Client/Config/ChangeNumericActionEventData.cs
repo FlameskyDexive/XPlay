@@ -15,7 +15,7 @@ namespace ET
 {
 
 /// <summary>
-/// ????????
+/// change numeric event bean
 /// </summary>
 public sealed partial class ChangeNumericActionEventData:  ActionEventBaseData 
 {
@@ -34,19 +34,19 @@ public sealed partial class ChangeNumericActionEventData:  ActionEventBaseData
     }
 
     /// <summary>
-    /// ????
+    /// numeric type
     /// </summary>
     public int NumericType { get; private set; }
     /// <summary>
-    /// ???
+    /// delta value
     /// </summary>
     public int Delta { get; private set; }
     /// <summary>
-    /// ????
+    /// target rule
     /// </summary>
     public int TargetRule { get; private set; }
     /// <summary>
-    /// ????
+    /// interrupt level
     /// </summary>
     public int InterruptLevel { get; private set; }
 

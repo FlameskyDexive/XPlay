@@ -15,7 +15,7 @@ namespace ET
                 return;
             }
 
-            RangeDamageActionEventData eventData = actionEvent?.ActionEventConfig?.EventData as RangeDamageActionEventData;
+            ActionEventBaseData eventData = actionEvent?.ActionEventConfig?.EventData;
             if (eventData == null)
             {
                 return;

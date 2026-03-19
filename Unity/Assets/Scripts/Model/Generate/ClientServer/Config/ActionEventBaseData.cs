@@ -15,7 +15,7 @@ namespace ET
 {
 
 /// <summary>
-/// ????????
+/// battle action event base bean
 /// </summary>
 public abstract partial class ActionEventBaseData: Bright.Config.BeanBase
 {
@@ -33,6 +33,7 @@ public abstract partial class ActionEventBaseData: Bright.Config.BeanBase
             case AddBuffActionEventData.__ID__: return new AddBuffActionEventData(_buf);
             case RemoveBuffActionEventData.__ID__: return new RemoveBuffActionEventData(_buf);
             case ChangeNumericActionEventData.__ID__: return new ChangeNumericActionEventData(_buf);
+            case ShapeRangeDamageActionEventData.__ID__: return new ShapeRangeDamageActionEventData(_buf);
             default: throw new SerializationException();
         }
     }

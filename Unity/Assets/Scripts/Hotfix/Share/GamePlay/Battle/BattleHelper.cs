@@ -40,6 +40,12 @@ namespace ET
                 damage = 0;
             }
 
+            damage = (int)AbsorbShield(defenderNumeric, damage);
+            if (damage <= 0)
+            {
+                return;
+            }
+
             int finalHp = currentHp - damage;
             if (finalHp < 0)
             {
@@ -55,7 +61,7 @@ namespace ET
             if (finalHp <= 0)
             {
                 to.GetComponent<SkillCastComponent>()?.InterruptCast();
-                to.GetComponent<BuffComponent>()?.ClearAllBuffs();
+                to.GetComponent<BuffComponent>()?.ClearAllBuffsOnDeath();
                 to.GetComponent<CombatStateComponent>()?.MarkDead();
             }
 
@@ -74,6 +80,29 @@ namespace ET
             if (targetNumeric == null)
             {
                 return;
+            }
+
+            if (numericType == NumericType.Shield)
+            {
+                long oldShield = targetNumeric.GetAsLong(numericType);
+                long newShield = System.Math.Max(0, oldShield + delta);
+                if (newShield != oldShield)
+                {
+                    targetNumeric.Set(numericType, newShield);
+                }
+
+                return;
+            }
+
+            if (numericType == NumericType.Hp && delta < 0)
+            {
+                long remainDamage = AbsorbShield(targetNumeric, -delta);
+                if (remainDamage <= 0)
+                {
+                    return;
+                }
+
+                delta = -remainDamage;
             }
 
             long oldValue = targetNumeric.GetAsLong(numericType);
@@ -114,7 +143,7 @@ namespace ET
                 if (newValue <= 0)
                 {
                     to.GetComponent<SkillCastComponent>()?.InterruptCast();
-                    to.GetComponent<BuffComponent>()?.ClearAllBuffs();
+                    to.GetComponent<BuffComponent>()?.ClearAllBuffsOnDeath();
                     combatStateComponent?.MarkDead();
                 }
 
@@ -123,6 +152,29 @@ namespace ET
             }
 
             EventSystem.Instance.Publish(to.Root(), new HitResult { hitResultType = EHitResultType.RecoverBlood, value = (int)changedValue });
+        }
+
+        private static long AbsorbShield(NumericComponent targetNumeric, long damage)
+        {
+            if (targetNumeric == null || damage <= 0)
+            {
+                return damage;
+            }
+
+            long shield = targetNumeric.GetAsLong(NumericType.Shield);
+            if (shield <= 0)
+            {
+                return damage;
+            }
+
+            long absorbed = System.Math.Min(shield, damage);
+            if (absorbed <= 0)
+            {
+                return damage;
+            }
+
+            targetNumeric.Set(NumericType.Shield, shield - absorbed);
+            return damage - absorbed;
         }
 
         private static void TryInterruptCast(Unit target, CombatStateComponent combatStateComponent, EInterruptLevel interruptLevel)

@@ -19,7 +19,7 @@ namespace ET
                 return;
             }
 
-            target.GetComponent<BuffComponent>()?.RemoveBuff(eventData.BuffId);
+            target.GetComponent<BuffComponent>()?.DispelBuff(eventData.BuffId);
         }
     }
 }

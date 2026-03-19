@@ -25,12 +25,14 @@ namespace ET
                 return;
             }
 
-            target.GetComponent<BuffComponent>()?.AddBuff(new BuffApplyRequest
+            bool applied = target.GetComponent<BuffComponent>()?.AddBuff(new BuffApplyRequest
             {
                 BuffId = eventData.BuffId,
                 SourceUnitId = owner.Id,
                 SourceSkillConfigId = actionEvent.SkillConfig?.Id ?? 0,
-            });
+            }) == true;
+
+            Log.Info($"action event add buff owner:{owner.Id} target:{target.Id} buff:{eventData.BuffId} success:{applied}");
         }
     }
 }

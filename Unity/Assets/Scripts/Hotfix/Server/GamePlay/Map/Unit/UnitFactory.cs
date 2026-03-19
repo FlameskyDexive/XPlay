@@ -34,7 +34,7 @@ namespace ET.Server
                     unit.AddComponent<TargetComponent>();
                     unit.AddComponent<ThreatComponent>();
                     unit.AddComponent<BuffComponent>();
-                    unit.AddComponent<SkillComponent, List<int>>(new List<int>() { 1001, 1002 });
+                    unit.AddComponent<SkillComponent, List<int>>(new List<int>() { 1003, 1004, 1001, 1002 });
                     return unit;
                 }
                 case EUnitType.Monster:

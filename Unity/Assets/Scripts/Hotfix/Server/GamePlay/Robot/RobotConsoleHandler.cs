@@ -3,6 +3,10 @@ using System.Reflection;
 
 namespace ET.Server
 {
+    [FriendOf(typeof(TargetComponent))]
+    [FriendOf(typeof(CombatStateComponent))]
+    [FriendOf(typeof(BuffComponent))]
+    [FriendOf(typeof(Buff))]
     [ConsoleHandler(ConsoleMode.Robot)]
     public class RobotConsoleHandler: IConsoleHandler
     {
@@ -93,8 +97,131 @@ namespace ET.Server
                     Log.Debug($"behavior tree run finish: {fileName}/{treeName}");
                     break;
                 }
+                case "BuffDemo":
+                {
+                    await RunBuffDemo(fiber, ss);
+                    break;
+                }
             }
             await ETTask.CompletedTask;
+        }
+
+        private static async ETTask RunBuffDemo(Fiber fiber, string[] args)
+        {
+            Scene root = fiber.Root;
+            Scene currentScene = root.CurrentScene();
+            if (currentScene == null)
+            {
+                Log.Console("BuffDemo fail: currentScene is null");
+                return;
+            }
+
+            ET.Unit myUnit = ET.Client.UnitHelper.GetMyUnitFromClientScene(root);
+            if (myUnit == null || myUnit.IsDisposed)
+            {
+                Log.Console("BuffDemo fail: my unit is null");
+                return;
+            }
+
+            string action = args.Length > 1 ? args[1] : "run";
+            switch (action)
+            {
+                case "target":
+                    SetNearestTarget(myUnit);
+                    PrintBuffState(myUnit, true);
+                    break;
+                case "skill1":
+                    SetNearestTarget(myUnit);
+                    SendOperate(root, EOperateType.Skill1);
+                    Log.Console("BuffDemo: queued skill1");
+                    break;
+                case "skill2":
+                    SetNearestTarget(myUnit);
+                    SendOperate(root, EOperateType.Skill2);
+                    Log.Console("BuffDemo: queued skill2");
+                    break;
+                case "inspect":
+                    PrintBuffState(myUnit, true);
+                    break;
+                case "run":
+                default:
+                    SetNearestTarget(myUnit);
+                    PrintBuffState(myUnit, true);
+                    SendOperate(root, EOperateType.Skill1);
+                    await root.GetComponent<TimerComponent>().WaitAsync(300);
+                    SendOperate(root, EOperateType.Skill2);
+                    await root.GetComponent<TimerComponent>().WaitAsync(1500);
+                    PrintBuffState(myUnit, true);
+                    break;
+            }
+        }
+
+        private static void SendOperate(Scene root, EOperateType operateType)
+        {
+            Type sessionComponentType = Type.GetType("ET.Client.SessionComponent, Unity.Model")
+                ?? Type.GetType("ET.Client.SessionComponent, Model");
+            Entity sessionComponent = sessionComponentType != null ? root.GetComponent(sessionComponentType) : null;
+            object session = sessionComponentType?.GetProperty("Session")?.GetValue(sessionComponent);
+            if (session == null)
+            {
+                Log.Console($"BuffDemo fail: SessionComponent missing for operate {operateType}");
+                return;
+            }
+
+            OperateInfo operateInfo = OperateInfo.Create();
+            operateInfo.OperateType = (int)operateType;
+            operateInfo.InputType = (int)EInputType.KeyDown;
+            C2Room_Operation c2RoomOperation = C2Room_Operation.Create();
+            c2RoomOperation.OperateInfos = new System.Collections.Generic.List<OperateInfo> { operateInfo };
+            session.GetType().GetMethod("Send", new[] { typeof(IMessage) })?.Invoke(session, new object[] { c2RoomOperation });
+        }
+
+        private static void SetNearestTarget(ET.Unit myUnit)
+        {
+            TargetComponent targetComponent = myUnit.GetComponent<TargetComponent>();
+            if (targetComponent == null)
+            {
+                Log.Console("BuffDemo fail: target component missing");
+                return;
+            }
+
+            ET.Unit target = TargetSelectHelper.FindNearestCombatTarget(myUnit);
+            if (target == null)
+            {
+                Log.Console("BuffDemo fail: no combat target found");
+                return;
+            }
+
+            targetComponent.SetTarget(target.Id);
+            Log.Console($"BuffDemo target set: self={myUnit.Id} target={target.Id}");
+        }
+
+        private static void PrintBuffState(ET.Unit myUnit, bool inspectTarget)
+        {
+            ET.Unit inspectUnit = myUnit;
+            if (inspectTarget)
+            {
+                long targetId = myUnit.GetComponent<TargetComponent>()?.CurrentTargetId ?? 0;
+                if (targetId != 0 && TargetSelectHelper.TryGetTarget(myUnit, targetId, out ET.Unit target))
+                {
+                    inspectUnit = target;
+                }
+            }
+
+            CombatStateComponent combatStateComponent = inspectUnit.GetComponent<CombatStateComponent>();
+            BuffComponent buffComponent = inspectUnit.GetComponent<BuffComponent>();
+            Log.Console($"BuffDemo inspect unit={inspectUnit.Id} tags={(ECombatTag)(combatStateComponent?.TagMask ?? 0)} buffCount={buffComponent?.BuffDic.Count ?? 0}");
+            if (buffComponent == null || buffComponent.BuffDic.Count == 0)
+            {
+                return;
+            }
+
+            foreach ((int buffId, EntityRef<Buff> buffRef) in buffComponent.BuffDic)
+            {
+                Buff buff = buffRef;
+                BuffConfig buffConfig = buff?.BuffConfig;
+                Log.Console($"  buff id={buffId} name={buffConfig?.Name} layer={buff?.LayerCount ?? 0} reason={buff?.RemoveReason ?? EBuffRemoveReason.None} tags={buffConfig?.TagGrantMask ?? 0}");
+            }
         }
     }
 }

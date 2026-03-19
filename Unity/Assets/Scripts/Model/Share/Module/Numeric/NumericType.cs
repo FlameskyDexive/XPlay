@@ -29,6 +29,13 @@
 	    public const int AOIFinalAdd = AOI * 10 + 4;
 	    public const int AOIFinalPct = AOI * 10 + 5;
 
+	    public const int Shield = 1004;
+	    public const int ShieldBase = Shield * 10 + 1;
+	    public const int ShieldAdd = Shield * 10 + 2;
+	    public const int ShieldPct = Shield * 10 + 3;
+	    public const int ShieldFinalAdd = Shield * 10 + 4;
+	    public const int ShieldFinalPct = Shield * 10 + 5;
+
         
         public const int Attack = 1011;         //攻击力
         public const int AttackBase = Attack * 10 + 1;

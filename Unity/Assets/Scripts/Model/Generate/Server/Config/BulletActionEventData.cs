@@ -15,7 +15,7 @@ namespace ET
 {
 
 /// <summary>
-/// ???????
+/// projectile event bean
 /// </summary>
 public sealed partial class BulletActionEventData:  ActionEventBaseData 
 {
@@ -37,31 +37,31 @@ public sealed partial class BulletActionEventData:  ActionEventBaseData
     }
 
     /// <summary>
-    /// ????ID
+    /// bullet config id
     /// </summary>
     public int BulletConfigId { get; private set; }
     /// <summary>
-    /// ??(????)
+    /// speed in millimeters per second
     /// </summary>
     public int Speed { get; private set; }
     /// <summary>
-    /// ??????
+    /// life time in milliseconds
     /// </summary>
     public int LifeMs { get; private set; }
     /// <summary>
-    /// ????(??)
+    /// collision radius in millimeters
     /// </summary>
     public int Radius { get; private set; }
     /// <summary>
-    /// ?????
+    /// projectile count
     /// </summary>
     public int Count { get; private set; }
     /// <summary>
-    /// ?????(?)
+    /// total spread angle in degrees
     /// </summary>
     public int SpreadAngleDeg { get; private set; }
     /// <summary>
-    /// ??????ID??
+    /// on hit action event ids
     /// </summary>
     public System.Collections.Generic.List<int> HitActionEventIds { get; private set; }
 

@@ -15,7 +15,7 @@ namespace ET
 {
 
 /// <summary>
-/// ??Buff????
+/// add buff event bean
 /// </summary>
 public sealed partial class AddBuffActionEventData:  ActionEventBaseData 
 {
@@ -32,11 +32,11 @@ public sealed partial class AddBuffActionEventData:  ActionEventBaseData
     }
 
     /// <summary>
-    /// Buff??ID
+    /// buff config id
     /// </summary>
     public int BuffId { get; private set; }
     /// <summary>
-    /// ????
+    /// target rule
     /// </summary>
     public int TargetRule { get; private set; }
 

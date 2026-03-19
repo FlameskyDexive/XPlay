@@ -20,9 +20,17 @@ namespace ET
         OverlayAddLayerRefreshTime,
         OnlyAddTime,
     }
+
+    public enum EBuffRemoveReason : byte
+    {
+        None = 0,
+        Remove = 1,
+        Expire = 2,
+        Dispel = 3,
+    }
     
     [ChildOf(typeof(BuffComponent))]
-    public class Buff:Entity,IAwake<int>, IFixedUpdate, IDestroy,ITransfer
+    public class Buff:Entity, IAwake<BuffApplyRequest>, IFixedUpdate, IDestroy, ITransfer
     {
         [BsonIgnore]
         public Unit Unit => this.GetParent<BuffComponent>()?.GetParent<Unit>();
@@ -42,6 +50,12 @@ namespace ET
         public long StartTime { get; set; }
         
         public long NextTriggerTime { get; set; }
+
+        public long EffectSnapshotBaseValue { get; set; }
+
+        public long StrengthScore { get; set; }
+
+        public EBuffRemoveReason RemoveReason { get; set; }
         
         
         public uint LayerCount { get; set; }

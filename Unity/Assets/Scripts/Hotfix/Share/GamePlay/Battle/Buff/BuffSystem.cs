@@ -11,24 +11,27 @@ namespace ET
     {
 
         [EntitySystem]
-        public static void Awake(this Buff self, int BuffId)
+        public static void Awake(this Buff self, BuffApplyRequest request)
         {
-            self.BuffId = BuffId;
-            //常规buff添加则立即出发一次，时间到销毁。如果有触发间隔，则间隔固定的时间再次出发buff行为
+            self.BuffId = request.BuffId;
+            self.SourceUnitId = request.SourceUnitId;
+            self.SourceSkillConfigId = request.SourceSkillConfigId;
+            self.GroupId = self.BuffConfig?.Goup ?? 0;
+            self.LayerCount = 1;
+            self.ApplyModifierLayers(1);
+            self.CaptureSnapshot();
+            self.UpdateStrengthScore();
+            self.ApplyGrantedTags();
             self.InitBuff();
+            Log.Info($"buff apply success unit:{self.Unit?.Id ?? 0} buff:{self.BuffId} source:{self.SourceUnitId} group:{self.GroupId} tags:{self.BuffConfig?.TagGrantMask ?? 0}");
         }
         [EntitySystem]
         public static void Destroy(this Buff self)
         {
-
-            if (self.BuffConfig?.EndEvents?.Count > 0)
-            {
-                foreach (int eventId in self.BuffConfig.EndEvents)
-                {
-                    self.CreateActionEvent(eventId);
-                }
-            }
-
+            Log.Info($"buff destroy unit:{self.Unit?.Id ?? 0} buff:{self.BuffId} reason:{self.RemoveReason}");
+            self.ApplyEndEffect();
+            self.RemoveAllModifierLayers();
+            self.RefreshGrantedTags();
         }
         /// <summary>
         /// 每帧更新检测buff的周期、触发事件等. 如果表现层需要获取当前buff的剩余时间进度等，此处更新
@@ -37,23 +40,36 @@ namespace ET
         [EntitySystem]
         public static void FixedUpdate(this Buff self)
         {
+            BuffConfig buffConfig = self.BuffConfig;
+            if (buffConfig == null)
+            {
+                return;
+            }
+
             long now = TimeInfo.Instance.ServerNow();
-            if (now > self.StartTime + self.BuffConfig.Duration)
+            if (now > self.StartTime + buffConfig.Duration)
             {
                 self.LifeTimeout();
                 return;
             }
 
-            if (self.BuffConfig.TriggerInterval > 0 && now >= self.NextTriggerTime)
+            if (buffConfig.TriggerInterval > 0 && now >= self.NextTriggerTime)
             {
                 self.TriggerBuff();
-                self.NextTriggerTime = now + self.BuffConfig.TriggerInterval;
+                self.NextTriggerTime = now + buffConfig.TriggerInterval;
             }
         }
 
         public static void LifeTimeout(this Buff self)
         {
+            if (self.LayerCount == 0)
+            {
+                self.RemoveCurrentBuff(EBuffRemoveReason.Expire);
+                return;
+            }
+
             //layerCount > 0时，减少层数量，重新计时buff
+            self.ApplyModifierLayers(-1);
             --self.LayerCount;
             if (self.LayerCount > 0)
             {
@@ -61,28 +77,12 @@ namespace ET
                 return;
             }
             //移除Buff
-            self.GetParent<BuffComponent>().RemoveBuff(self.BuffId);
+            self.RemoveCurrentBuff(EBuffRemoveReason.Expire);
         }
         public static void InitBuff(this Buff self)
         {
-
-            if (self.BuffConfig?.StartEvents?.Count > 0)
-            {
-                foreach (int eventId in self.BuffConfig.StartEvents)
-                {
-                    self.CreateActionEvent(eventId);
-                }
-            }
-
+            self.ApplyStartEffect();
             self.RefreshDuration();
-        }
-
-        public static void RefreshDuration(this Buff self)
-        {
-            self.StartTime = TimeInfo.Instance.ServerNow();
-            self.NextTriggerTime = self.BuffConfig.TriggerInterval > 0
-                ? self.StartTime + self.BuffConfig.TriggerInterval
-                : long.MaxValue;
         }
 
         /// <summary>
@@ -91,16 +91,7 @@ namespace ET
         /// <param name="self"></param>
         public static void TriggerBuff(this Buff self)
         {
-            //如果buff携带可触发技能事件，则触发事件
-
-            if (self.BuffConfig?.TriggerEvents?.Count > 0)
-            {
-                foreach (int eventId in self.BuffConfig.TriggerEvents)
-                {
-                    self.CreateActionEvent(eventId);
-                }
-            }
-
+            self.ApplyTriggerEffect();
         }
 
         /// <summary>

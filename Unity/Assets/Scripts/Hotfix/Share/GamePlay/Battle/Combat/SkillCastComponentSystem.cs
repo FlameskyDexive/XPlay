@@ -408,6 +408,18 @@ namespace ET
                 {
                     return rangeDamageActionEventData.Radius > 0 ? rangeDamageActionEventData.Radius / 1000f : 0f;
                 }
+                case ShapeRangeDamageActionEventData shapeRangeDamageActionEventData:
+                {
+                    float forwardOffset = shapeRangeDamageActionEventData.ForwardOffset / 1000f;
+                    float rightOffset = shapeRangeDamageActionEventData.RightOffset / 1000f;
+                    float offsetDistance = math.sqrt(forwardOffset * forwardOffset + rightOffset * rightOffset);
+                    return shapeRangeDamageActionEventData.ColliderType switch
+                    {
+                        EColliderType.Circle => offsetDistance + math.max(0f, shapeRangeDamageActionEventData.Radius / 1000f),
+                        EColliderType.Box => offsetDistance + math.sqrt(shapeRangeDamageActionEventData.Width * shapeRangeDamageActionEventData.Width + shapeRangeDamageActionEventData.Height * shapeRangeDamageActionEventData.Height) / 2000f,
+                        _ => 0f,
+                    };
+                }
                 case BulletActionEventData bulletActionEventData:
                 {
                     float speed = bulletActionEventData.Speed > 0 ? bulletActionEventData.Speed / 1000f : 10f;

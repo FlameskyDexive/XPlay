@@ -36,7 +36,7 @@ namespace ET
             BattleHelper.HitSettle(from, to, hitType, bullet);
         }
 
-        public static ListComponent<Unit> QueryRangeDamageTargets(Unit owner, RangeDamageActionEventData eventData)
+        public static ListComponent<Unit> QueryRangeDamageTargets(Unit owner, ActionEventBaseData eventData)
         {
             ListComponent<Unit> targets = ListComponent<Unit>.Create();
             if (owner == null || owner.IsDisposed || eventData == null)
@@ -94,21 +94,13 @@ namespace ET
             return targets;
         }
 
-        private static bool TryBuildHitArea(Unit owner, RangeDamageActionEventData eventData, out CombatHitArea area)
+        private static bool TryBuildHitArea(Unit owner, ActionEventBaseData eventData, out CombatHitArea area)
         {
             area = default;
             if (eventData == null)
             {
                 return false;
             }
-
-            int radiusMilli = eventData.Radius;
-            if (radiusMilli <= 0)
-            {
-                return false;
-            }
-
-            List<int> parameters = new List<int>(1) { radiusMilli };
 
             Vector2 origin = ToVector2(owner.Position);
             Vector2 forward = ToVector2(owner.Forward);
@@ -122,37 +114,39 @@ namespace ET
             }
 
             Vector2 right = new Vector2(forward.Y, -forward.X);
-            bool encodedShape = parameters.Count > 1 && parameters[0] >= (int)EColliderType.Circle && parameters[0] <= (int)EColliderType.Box;
-            if (!encodedShape)
+            switch (eventData)
             {
-                float legacyRadius = ToMeters(parameters[0]);
-                area = new CombatHitArea(EColliderType.Circle, origin, legacyRadius, 0f, 0f, 0f);
-                return legacyRadius > 0f;
-            }
-
-            EColliderType colliderType = (EColliderType)parameters[0];
-            switch (colliderType)
-            {
-                case EColliderType.Circle:
+                case RangeDamageActionEventData rangeDamageActionEventData:
                 {
-                    float radius = parameters.Count > 1 ? ToMeters(parameters[1]) : 0f;
-                    float forwardOffset = parameters.Count > 2 ? ToMeters(parameters[2]) : 0f;
-                    float rightOffset = parameters.Count > 3 ? ToMeters(parameters[3]) : 0f;
-                    Vector2 center = origin + forward * forwardOffset + right * rightOffset;
-                    area = new CombatHitArea(EColliderType.Circle, center, radius, 0f, 0f, 0f);
+                    float radius = ToMeters(rangeDamageActionEventData.Radius);
+                    area = new CombatHitArea(EColliderType.Circle, origin, radius, 0f, 0f, 0f);
                     return radius > 0f;
                 }
-                case EColliderType.Box:
+                case ShapeRangeDamageActionEventData shapeRangeDamageActionEventData:
                 {
-                    float width = parameters.Count > 1 ? ToMeters(parameters[1]) : 0f;
-                    float height = parameters.Count > 2 ? ToMeters(parameters[2]) : 0f;
-                    float forwardOffset = parameters.Count > 3 ? ToMeters(parameters[3]) : 0f;
-                    float rightOffset = parameters.Count > 4 ? ToMeters(parameters[4]) : 0f;
-                    float extraAngle = parameters.Count > 5 ? math.radians(parameters[5]) : 0f;
+                    float forwardOffset = ToMeters(shapeRangeDamageActionEventData.ForwardOffset);
+                    float rightOffset = ToMeters(shapeRangeDamageActionEventData.RightOffset);
                     Vector2 center = origin + forward * forwardOffset + right * rightOffset;
-                    float angle = MathHelper.Angle(new float3(0f, 0f, 1f), new float3(owner.Forward.x, 0f, owner.Forward.z)) + extraAngle;
-                    area = new CombatHitArea(EColliderType.Box, center, 0f, width * 0.5f, height * 0.5f, angle);
-                    return width > 0f && height > 0f;
+                    switch (shapeRangeDamageActionEventData.ColliderType)
+                    {
+                        case EColliderType.Circle:
+                        {
+                            float radius = ToMeters(shapeRangeDamageActionEventData.Radius);
+                            area = new CombatHitArea(EColliderType.Circle, center, radius, 0f, 0f, 0f);
+                            return radius > 0f;
+                        }
+                        case EColliderType.Box:
+                        {
+                            float width = ToMeters(shapeRangeDamageActionEventData.Width);
+                            float height = ToMeters(shapeRangeDamageActionEventData.Height);
+                            float extraAngle = math.radians(shapeRangeDamageActionEventData.ExtraAngleDeg);
+                            float angle = MathHelper.Angle(new float3(0f, 0f, 1f), new float3(owner.Forward.x, 0f, owner.Forward.z)) + extraAngle;
+                            area = new CombatHitArea(EColliderType.Box, center, 0f, width * 0.5f, height * 0.5f, angle);
+                            return width > 0f && height > 0f;
+                        }
+                        default:
+                            return false;
+                    }
                 }
                 default:
                     return false;

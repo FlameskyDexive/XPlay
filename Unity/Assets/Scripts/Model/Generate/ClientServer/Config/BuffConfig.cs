@@ -21,13 +21,20 @@ public sealed partial class BuffConfig: Bright.Config.BeanBase
         Id = _buf.ReadInt();
         Name = _buf.ReadString();
         Desc = _buf.ReadString();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);StartEvents = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); StartEvents.Add(_e0);}}
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);EndEvents = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); EndEvents.Add(_e0);}}
+        EffectData = BuffEffectBaseData.DeserializeBuffEffectBaseData(_buf);
+        ModifierData = BuffModifierBaseData.DeserializeBuffModifierBaseData(_buf);
         Duration = _buf.ReadInt();
         TriggerInterval = _buf.ReadInt();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);TriggerEvents = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); TriggerEvents.Add(_e0);}}
         MaxLayer = _buf.ReadInt();
         Goup = _buf.ReadInt();
+        AddPolicy = (EBuffAddPolicy)_buf.ReadInt();
+        SnapshotPolicy = (EBuffSnapshotPolicy)_buf.ReadInt();
+        RemovePolicy = (EBuffRemovePolicy)_buf.ReadInt();
+        TagGrantMask = _buf.ReadLong();
+        TagBlockMask = _buf.ReadLong();
+        CanDispel = _buf.ReadBool();
+        KeepOnDeath = _buf.ReadBool();
+        PeriodicStartDelayMs = _buf.ReadInt();
         PostInit();
     }
 
@@ -41,52 +48,84 @@ public sealed partial class BuffConfig: Bright.Config.BeanBase
     /// </summary>
     public int Id { get; private set; }
     /// <summary>
-    /// 名称
+    /// name
     /// </summary>
     public string Name { get; private set; }
     /// <summary>
-    /// 备注
+    /// desc
     /// </summary>
     public string Desc { get; private set; }
     /// <summary>
-    /// 开始事件
+    /// EffectData polymorphic bean
     /// </summary>
-    public System.Collections.Generic.List<int> StartEvents { get; private set; }
+    public BuffEffectBaseData EffectData { get; private set; }
     /// <summary>
-    /// 结束事件
+    /// ModifierData polymorphic bean
     /// </summary>
-    public System.Collections.Generic.List<int> EndEvents { get; private set; }
+    public BuffModifierBaseData ModifierData { get; private set; }
     /// <summary>
-    /// 持续时间
+    /// duration in ms
     /// </summary>
     public int Duration { get; private set; }
     /// <summary>
-    /// 触发间隔
+    /// trigger interval in ms
     /// </summary>
     public int TriggerInterval { get; private set; }
     /// <summary>
-    /// 触发事件id
-    /// </summary>
-    public System.Collections.Generic.List<int> TriggerEvents { get; private set; }
-    /// <summary>
-    /// 最大叠加层数
+    /// max stack layer
     /// </summary>
     public int MaxLayer { get; private set; }
     /// <summary>
-    /// 分组
+    /// group
     /// </summary>
     public int Goup { get; private set; }
+    /// <summary>
+    /// buff add policy
+    /// </summary>
+    public EBuffAddPolicy AddPolicy { get; private set; }
+    /// <summary>
+    /// buff snapshot policy
+    /// </summary>
+    public EBuffSnapshotPolicy SnapshotPolicy { get; private set; }
+    /// <summary>
+    /// buff remove policy
+    /// </summary>
+    public EBuffRemovePolicy RemovePolicy { get; private set; }
+    /// <summary>
+    /// granted combat tag mask
+    /// </summary>
+    public long TagGrantMask { get; private set; }
+    /// <summary>
+    /// blocked combat tag mask
+    /// </summary>
+    public long TagBlockMask { get; private set; }
+    /// <summary>
+    /// whether buff can be dispelled
+    /// </summary>
+    public bool CanDispel { get; private set; }
+    /// <summary>
+    /// whether buff keeps on death
+    /// </summary>
+    public bool KeepOnDeath { get; private set; }
+    /// <summary>
+    /// delay before first periodic trigger in ms
+    /// </summary>
+    public int PeriodicStartDelayMs { get; private set; }
 
     public const int __ID__ = -1370631787;
     public override int GetTypeId() => __ID__;
 
     public  void Resolve(ConcurrentDictionary<Type, IConfigSingleton> _tables)
     {
+        EffectData?.Resolve(_tables);
+        ModifierData?.Resolve(_tables);
         PostResolve();
     }
 
     public  void TranslateText(System.Func<string, string, string> translator)
     {
+        EffectData?.TranslateText(translator);
+        ModifierData?.TranslateText(translator);
     }
 
     public override string ToString()
@@ -95,13 +134,20 @@ public sealed partial class BuffConfig: Bright.Config.BeanBase
         + "Id:" + Id + ","
         + "Name:" + Name + ","
         + "Desc:" + Desc + ","
-        + "StartEvents:" + Bright.Common.StringUtil.CollectionToString(StartEvents) + ","
-        + "EndEvents:" + Bright.Common.StringUtil.CollectionToString(EndEvents) + ","
+        + "EffectData:" + EffectData + ","
+        + "ModifierData:" + ModifierData + ","
         + "Duration:" + Duration + ","
         + "TriggerInterval:" + TriggerInterval + ","
-        + "TriggerEvents:" + Bright.Common.StringUtil.CollectionToString(TriggerEvents) + ","
         + "MaxLayer:" + MaxLayer + ","
         + "Goup:" + Goup + ","
+        + "AddPolicy:" + AddPolicy + ","
+        + "SnapshotPolicy:" + SnapshotPolicy + ","
+        + "RemovePolicy:" + RemovePolicy + ","
+        + "TagGrantMask:" + TagGrantMask + ","
+        + "TagBlockMask:" + TagBlockMask + ","
+        + "CanDispel:" + CanDispel + ","
+        + "KeepOnDeath:" + KeepOnDeath + ","
+        + "PeriodicStartDelayMs:" + PeriodicStartDelayMs + ","
         + "}";
     }
     
