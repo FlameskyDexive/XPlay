@@ -34,6 +34,19 @@ namespace ET
     }
 
     [BTNodeHandler]
+    public sealed class BTCheckStateChangeResultCondition : ABTNodeHandler<BTCheckStateChangeResult>
+    {
+        protected override BTExecResult Run(BTCheckStateChangeResult node, BTEnv env)
+        {
+            BTExecutionContext context = env.BindContext(node);
+            int expectedResult = context.GetIntArgument(node.Definition, "result", (int)ECombatStateChangeResult.Success);
+            int currentResult = context.Blackboard?.Get<int>(BTCombatBlackboardKeys.StateChangeResult, (int)ECombatStateChangeResult.InvalidState)
+                ?? (int)ECombatStateChangeResult.InvalidState;
+            return currentResult == expectedResult ? BTExecResult.Success : BTExecResult.Failure;
+        }
+    }
+
+    [BTNodeHandler]
     public sealed class BTCastSelectedSkillAction : ABTNodeHandler<BTCastSelectedSkill>
     {
         protected override BTExecResult Run(BTCastSelectedSkill node, BTEnv env)

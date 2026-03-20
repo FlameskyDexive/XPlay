@@ -194,6 +194,7 @@ namespace ET
         InCd = 6,
         Controlled = 7,
         InsufficientMp = 8,
+        OutOfRange = 9,
     }
 
     public enum ESkillCastResult : byte

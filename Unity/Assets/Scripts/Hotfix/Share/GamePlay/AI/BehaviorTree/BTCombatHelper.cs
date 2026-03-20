@@ -420,6 +420,7 @@ namespace ET
                 ESkillCastResult.InCd => ECombatStateChangeResult.InCd,
                 ESkillCastResult.Dead => ECombatStateChangeResult.Dead,
                 ESkillCastResult.Controlled => ECombatStateChangeResult.Controlled,
+                ESkillCastResult.OutOfRange => ECombatStateChangeResult.OutOfRange,
                 ESkillCastResult.BlockedByTag => ECombatStateChangeResult.BlockedByTag,
                 ESkillCastResult.InsufficientMp => ECombatStateChangeResult.InsufficientMp,
                 _ => ECombatStateChangeResult.InvalidState,

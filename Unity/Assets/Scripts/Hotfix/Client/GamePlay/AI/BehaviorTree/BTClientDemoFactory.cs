@@ -96,7 +96,38 @@ namespace ET.Client
             {
                 NodeId = "combat_sequence",
                 Title = "Combat",
-                ChildIds = { "combat_target_selector", "set_move_combat", "move_to_range", "set_idle_before_cast", "stop_move_before_cast", "face_target", "select_skill", "can_cast", "cast_skill", "wait_cast_complete" },
+                ChildIds = { "combat_target_selector", "set_move_combat", "move_to_range", "select_skill", "cast_flow_selector" },
+            });
+
+            tree.Nodes.Add(new BTSelectorNodeData
+            {
+                NodeId = "cast_flow_selector",
+                Title = "Cast Flow",
+                ChildIds =
+                {
+                    "cast_execute_sequence",
+                    "cast_retry_out_of_range",
+                    "cast_retry_no_target",
+                    "cast_retry_insufficient_mp",
+                    "cast_retry_cd",
+                    "cast_retry_controlled",
+                    "cast_retry_blocked",
+                },
+            });
+
+            tree.Nodes.Add(new BTSequenceNodeData
+            {
+                NodeId = "cast_execute_sequence",
+                Title = "Cast Execute",
+                ChildIds =
+                {
+                    "set_idle_before_cast",
+                    "stop_move_before_cast",
+                    "face_target",
+                    "set_cast_state",
+                    "cast_skill",
+                    "wait_cast_complete",
+                },
             });
 
             tree.Nodes.Add(new BTSelectorNodeData
@@ -132,6 +163,7 @@ namespace ET.Client
             tree.Nodes.Add(CreateCombatStateAction("set_idle_before_cast", "Set Idle", ECombatSubState.Idle));
             tree.Nodes.Add(CreateAction("stop_move_before_cast", "Stop Move", BTCombatNodeTypes.StopMove, nameof(BTStopMove)));
             tree.Nodes.Add(CreateAction("face_target", "Face Target", BTCombatNodeTypes.FaceTarget, nameof(BTFaceTarget)));
+            tree.Nodes.Add(CreateCombatStateAction("set_cast_state", "Set CastPoint", ECombatSubState.CastPoint));
 
             BTActionNodeData selectSkill = CreateAction("select_skill", "Select Skill", BTCombatNodeTypes.SelectSkill, nameof(BTSelectSkill));
             selectSkill.Arguments.Add(CreateIntArgument("preferredSlot", -1));
@@ -139,6 +171,63 @@ namespace ET.Client
 
             tree.Nodes.Add(CreateCondition("can_cast", "Can Cast", BTCombatNodeTypes.CanCastSelectedSkill, nameof(BTCanCastSelectedSkill)));
             tree.Nodes.Add(CreateAction("cast_skill", "Cast Skill", BTCombatNodeTypes.CastSelectedSkill, nameof(BTCastSelectedSkill)));
+
+            tree.Nodes.Add(new BTSequenceNodeData
+            {
+                NodeId = "cast_retry_out_of_range",
+                Title = "Retry Out Of Range",
+                ChildIds = { "check_result_out_of_range", "set_move_retry", "move_to_range_retry" },
+            });
+            tree.Nodes.Add(CreateStateChangeResultCondition("check_result_out_of_range", "Result Out Of Range", ECombatStateChangeResult.OutOfRange));
+            tree.Nodes.Add(CreateCombatStateAction("set_move_retry", "Set Move Retry", ECombatSubState.Move));
+            BTActionNodeData moveToRangeRetry = CreateAction("move_to_range_retry", "Move To Range Retry", BTCombatNodeTypes.MoveToCombatRange, nameof(BTMoveToCombatRange));
+            moveToRangeRetry.Arguments.Add(CreateFloatArgument("range", 2.5f));
+            moveToRangeRetry.Arguments.Add(CreateIntArgument("tickIntervalMs", 100));
+            tree.Nodes.Add(moveToRangeRetry);
+
+            tree.Nodes.Add(new BTSequenceNodeData
+            {
+                NodeId = "cast_retry_no_target",
+                Title = "Retry No Target",
+                ChildIds = { "check_result_no_target", "clear_invalid_target_retry", "find_target_retry" },
+            });
+            tree.Nodes.Add(CreateStateChangeResultCondition("check_result_no_target", "Result No Target", ECombatStateChangeResult.NoTarget));
+            tree.Nodes.Add(CreateAction("clear_invalid_target_retry", "Clear Invalid Target Retry", BTCombatNodeTypes.ClearInvalidTarget, nameof(BTClearInvalidTarget)));
+            BTActionNodeData findTargetRetry = CreateAction("find_target_retry", "Find Target Retry", BTCombatNodeTypes.FindCombatTarget, nameof(BTFindCombatTarget));
+            findTargetRetry.Arguments.Add(CreateFloatArgument("maxRange", 25f));
+            tree.Nodes.Add(findTargetRetry);
+
+            tree.Nodes.Add(new BTSequenceNodeData
+            {
+                NodeId = "cast_retry_insufficient_mp",
+                Title = "Retry Insufficient Mp",
+                ChildIds = { "check_result_insufficient_mp", "idle_wait" },
+            });
+            tree.Nodes.Add(CreateStateChangeResultCondition("check_result_insufficient_mp", "Result Insufficient Mp", ECombatStateChangeResult.InsufficientMp));
+
+            tree.Nodes.Add(new BTSequenceNodeData
+            {
+                NodeId = "cast_retry_cd",
+                Title = "Retry In Cd",
+                ChildIds = { "check_result_in_cd", "idle_wait" },
+            });
+            tree.Nodes.Add(CreateStateChangeResultCondition("check_result_in_cd", "Result In Cd", ECombatStateChangeResult.InCd));
+
+            tree.Nodes.Add(new BTSequenceNodeData
+            {
+                NodeId = "cast_retry_controlled",
+                Title = "Retry Controlled",
+                ChildIds = { "check_result_controlled", "control_wait" },
+            });
+            tree.Nodes.Add(CreateStateChangeResultCondition("check_result_controlled", "Result Controlled", ECombatStateChangeResult.Controlled));
+
+            tree.Nodes.Add(new BTSequenceNodeData
+            {
+                NodeId = "cast_retry_blocked",
+                Title = "Retry Blocked",
+                ChildIds = { "check_result_blocked", "control_wait" },
+            });
+            tree.Nodes.Add(CreateStateChangeResultCondition("check_result_blocked", "Result Blocked", ECombatStateChangeResult.BlockedByTag));
 
             BTActionNodeData waitCastComplete = CreateAction("wait_cast_complete", "Wait Cast Complete", BTCombatNodeTypes.WaitCastComplete, nameof(BTWaitCastComplete));
             waitCastComplete.Arguments.Add(CreateIntArgument("timeoutMs", 5000));
@@ -180,6 +269,13 @@ namespace ET.Client
             BTActionNodeData actionNodeData = CreateAction(nodeId, title, BTCombatNodeTypes.SetCombatState, nameof(BTSetCombatState));
             actionNodeData.Arguments.Add(CreateIntArgument("state", (int)state));
             return actionNodeData;
+        }
+
+        private static BTConditionNodeData CreateStateChangeResultCondition(string nodeId, string title, ECombatStateChangeResult result)
+        {
+            BTConditionNodeData conditionNodeData = CreateCondition(nodeId, title, BTCombatNodeTypes.CheckStateChangeResult, nameof(BTCheckStateChangeResult));
+            conditionNodeData.Arguments.Add(CreateIntArgument("result", (int)result));
+            return conditionNodeData;
         }
 
         private static BTConditionNodeData CreateCondition(string nodeId, string title, string typeId, string handlerName)

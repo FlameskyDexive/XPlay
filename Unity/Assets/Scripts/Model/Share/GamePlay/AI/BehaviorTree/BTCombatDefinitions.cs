@@ -11,6 +11,7 @@ namespace ET
         public const string RetreatFromCombatTarget = "combat.action.retreat_from_target";
         public const string FaceTarget = "combat.action.face_target";
         public const string SelectSkill = "combat.action.select_skill";
+        public const string CheckStateChangeResult = "combat.condition.check_state_change_result";
         public const string CanCastSelectedSkill = "combat.condition.can_cast_selected_skill";
         public const string CastSelectedSkill = "combat.action.cast_selected_skill";
         public const string WaitCastComplete = "combat.action.wait_cast_complete";

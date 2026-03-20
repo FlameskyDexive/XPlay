@@ -75,6 +75,36 @@ namespace ET
     }
 
     [BTNodeDescriptor]
+    public sealed class BTSetCombatStateNodeDescriptor : ABTNodeDescriptor
+    {
+        public override string TypeId => "combat.action.set_state";
+
+        public override BTNodeKind NodeKind => BTNodeKind.Action;
+
+        public override string MenuPath => "Behaviors/Combat/Set Combat State";
+
+        public override string HandlerName => "BTSetCombatState";
+
+        public override string Description => "Attempts to switch combat logic state through the unified combat state component. Actual pre-checks are evaluated in the behavior tree runtime before the state request is submitted.";
+
+        public override IReadOnlyList<BTNodeParameterDefinition> Parameters => new List<BTNodeParameterDefinition>
+        {
+            new()
+            {
+                Name = "state",
+                DisplayName = "State",
+                ValueType = BTValueType.Integer,
+                DefaultValue = new BTSerializedValue
+                {
+                    ValueType = BTValueType.Integer,
+                    IntValue = 1,
+                },
+                Description = "Uses ECombatSubState numeric value. Common values: Idle=1, CastPoint=3, Recover=5, Dead=6, Move=7.",
+            },
+        };
+    }
+
+    [BTNodeDescriptor]
     public sealed class BTStopMoveNodeDescriptor : ABTNodeDescriptor
     {
         public override string TypeId => "combat.action.stop_move";
@@ -234,6 +264,36 @@ namespace ET
         public override string HandlerName => "BTCanCastSelectedSkill";
 
         public override string Description => "Validates whether the selected skill can currently be cast by the unit.";
+    }
+
+    [BTNodeDescriptor]
+    public sealed class BTCheckStateChangeResultNodeDescriptor : ABTNodeDescriptor
+    {
+        public override string TypeId => "combat.condition.check_state_change_result";
+
+        public override BTNodeKind NodeKind => BTNodeKind.Condition;
+
+        public override string MenuPath => "Conditions/Combat/Check State Change Result";
+
+        public override string HandlerName => "BTCheckStateChangeResult";
+
+        public override string Description => "Checks the latest Combat.StateChangeResult blackboard value. Useful for retry/fallback branches after Set Combat State.";
+
+        public override IReadOnlyList<BTNodeParameterDefinition> Parameters => new List<BTNodeParameterDefinition>
+        {
+            new()
+            {
+                Name = "result",
+                DisplayName = "Expected Result",
+                ValueType = BTValueType.Integer,
+                DefaultValue = new BTSerializedValue
+                {
+                    ValueType = BTValueType.Integer,
+                    IntValue = 0,
+                },
+                Description = "Uses ECombatStateChangeResult numeric value. Common values: Success=0, NoTarget=5, InCd=6, Controlled=7, InsufficientMp=8, OutOfRange=9.",
+            },
+        };
     }
 
     [BTNodeDescriptor]

@@ -31,12 +31,17 @@ namespace ET
             context.Blackboard?.Set(BTCombatBlackboardKeys.StateChangeResult, (int)result);
             if (!canSwitch)
             {
+                Log.Info($"bt set state blocked unit:{unit.Id} targetState:{targetSubState} result:{result}");
                 context.SyncCombatBlackboard(unit);
                 return BTExecResult.Failure;
             }
 
             bool success = combatStateComponent.TrySetState(request, out result);
             context.Blackboard?.Set(BTCombatBlackboardKeys.StateChangeResult, (int)result);
+            if (!success)
+            {
+                Log.Info($"bt set state failed unit:{unit.Id} targetState:{targetSubState} result:{result}");
+            }
             context.SyncCombatBlackboard(unit);
             return success ? BTExecResult.Success : BTExecResult.Failure;
         }

@@ -154,6 +154,11 @@ namespace ET
     }
 
     [EnableClass]
+    public sealed class BTCheckStateChangeResult : BTCondition
+    {
+    }
+
+    [EnableClass]
     public sealed class BTInControl : BTCondition
     {
     }

@@ -248,7 +248,7 @@ namespace ET
         {
             foreach (BTNodeView nodeView in this.nodeViews.Values)
             {
-                nodeView.RefreshView(BTNodeState.Inactive);
+                nodeView.RefreshView(BTNodeState.Inactive, this.window.GetActiveSnapshot());
             }
 
             this.RefreshDebugStates(this.window.GetActiveSnapshot());
@@ -573,7 +573,7 @@ namespace ET
                     state = debugState;
                 }
 
-                nodeView.RefreshView(state);
+                nodeView.RefreshView(state, snapshot);
             }
         }
 

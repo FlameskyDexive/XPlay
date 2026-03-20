@@ -263,6 +263,12 @@ namespace ET
                 return new BTCanCastSelectedSkill();
             }
 
+            if (string.Equals(definition.TypeId, BTCombatNodeTypes.CheckStateChangeResult, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(definition.ConditionHandlerName, nameof(BTCheckStateChangeResult), StringComparison.OrdinalIgnoreCase))
+            {
+                return new BTCheckStateChangeResult();
+            }
+
             if (string.Equals(definition.TypeId, BTCombatNodeTypes.InControl, StringComparison.OrdinalIgnoreCase)
                 || string.Equals(definition.ConditionHandlerName, nameof(BTInControl), StringComparison.OrdinalIgnoreCase))
             {

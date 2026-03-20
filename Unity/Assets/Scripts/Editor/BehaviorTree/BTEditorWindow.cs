@@ -12,6 +12,8 @@ namespace ET
 {
     public sealed class BTEditorWindow : EditorWindow
     {
+        private const string CombatStateChangeResultKey = "Combat.StateChangeResult";
+
         private const string MiniMapEditorPrefKey = "ET.BehaviorTreeEditor.ShowMiniMap";
         private const string GridEditorPrefKey = "ET.BehaviorTreeEditor.ShowGrid";
         private const string ConnectionStyleEditorPrefKey = "ET.BehaviorTreeEditor.ConnectionStyle";
@@ -786,6 +788,8 @@ namespace ET
                 return;
             }
 
+            this.DrawStateChangeResultDebug(snapshot);
+
             HashSet<string> drawnKeys = new(StringComparer.OrdinalIgnoreCase);
             foreach (BTBlackboardEntryData entry in this.asset.BlackboardEntries)
             {
@@ -800,7 +804,7 @@ namespace ET
                 string currentValue = snapshot.BlackboardValues.TryGetValue(entry.Key, out string runtimeValue)
                         ? runtimeValue
                         : BTValueUtility.ToDisplayString(entry.DefaultValue);
-                EditorGUILayout.LabelField(currentValue);
+                EditorGUILayout.LabelField(this.FormatRuntimeBlackboardValue(entry.Key, currentValue));
 
                 if (!string.IsNullOrWhiteSpace(entry.Description))
                 {
@@ -823,10 +827,67 @@ namespace ET
 
                     EditorGUILayout.BeginVertical("box");
                     EditorGUILayout.LabelField(key, EditorStyles.boldLabel);
-                    EditorGUILayout.LabelField(value?.ToString() ?? "null");
+                    EditorGUILayout.LabelField(this.FormatRuntimeBlackboardValue(key, value));
                     EditorGUILayout.EndVertical();
                 }
             }
+        }
+
+        private void DrawStateChangeResultDebug(BTDebugSnapshot snapshot)
+        {
+            if (snapshot?.BlackboardValues == null || !snapshot.BlackboardValues.TryGetValue(CombatStateChangeResultKey, out string rawValue))
+            {
+                return;
+            }
+
+            EditorGUILayout.Space(4);
+            EditorGUILayout.LabelField("State Change Debug", EditorStyles.boldLabel);
+            int? result = ParseStateChangeResult(rawValue);
+            string message = result.HasValue ? $"{CombatStateChangeResultKey} = {GetStateChangeResultName(result.Value)} ({result.Value})" : $"{CombatStateChangeResultKey} = {rawValue}";
+            MessageType messageType = !result.HasValue || result.Value == 0 ? MessageType.Info : MessageType.Warning;
+            EditorGUILayout.HelpBox(message, messageType);
+        }
+
+        private string FormatRuntimeBlackboardValue(string key, string value)
+        {
+            if (string.Equals(key, CombatStateChangeResultKey, StringComparison.OrdinalIgnoreCase))
+            {
+                int? result = ParseStateChangeResult(value);
+                if (result.HasValue)
+                {
+                    return $"{GetStateChangeResultName(result.Value)} ({result.Value})";
+                }
+            }
+
+            return value ?? "null";
+        }
+
+        private static int? ParseStateChangeResult(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return null;
+            }
+
+            return int.TryParse(value, out int intValue) ? intValue : null;
+        }
+
+        private static string GetStateChangeResultName(int value)
+        {
+            return value switch
+            {
+                0 => "Success",
+                1 => "InvalidState",
+                2 => "Dead",
+                3 => "BlockedByTag",
+                4 => "SkillNotFound",
+                5 => "NoTarget",
+                6 => "InCd",
+                7 => "Controlled",
+                8 => "InsufficientMp",
+                9 => "OutOfRange",
+                _ => "Unknown",
+            };
         }
 
         private bool IsBlackboardEntryVisible(string key)
@@ -875,15 +936,35 @@ namespace ET
 
         private string[] GetBlackboardKeyOptions()
         {
-            if (this.asset == null || this.asset.BlackboardEntries.Count == 0)
+            HashSet<string> keys = new(StringComparer.OrdinalIgnoreCase)
             {
-                return Array.Empty<string>();
+                CombatStateChangeResultKey,
+            };
+
+            if (this.asset != null)
+            {
+                foreach (BTBlackboardEntryData entry in this.asset.BlackboardEntries)
+                {
+                    if (!string.IsNullOrWhiteSpace(entry?.Key))
+                    {
+                        keys.Add(entry.Key);
+                    }
+                }
             }
 
-            return this.asset.BlackboardEntries
-                    .Where(entry => !string.IsNullOrWhiteSpace(entry.Key))
-                    .Select(entry => entry.Key)
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
+            BTDebugSnapshot snapshot = this.GetActiveSnapshot();
+            if (snapshot?.BlackboardValues != null)
+            {
+                foreach (string key in snapshot.BlackboardValues.Keys)
+                {
+                    if (!string.IsNullOrWhiteSpace(key))
+                    {
+                        keys.Add(key);
+                    }
+                }
+            }
+
+            return keys
                     .OrderBy(key => key, StringComparer.OrdinalIgnoreCase)
                     .ToArray();
         }
