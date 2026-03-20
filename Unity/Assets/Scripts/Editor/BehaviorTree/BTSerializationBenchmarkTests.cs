@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -9,6 +11,81 @@ namespace ET
 {
     public sealed class BTSerializationBenchmarkTests
     {
+        [Test]
+        public void BehaviorTree_AITest_CompiledTemplate_Parity()
+        {
+            object package = InvokeHotfixStatic("ET.Client.BTClientDemoFactory", "CreateAITestPackage");
+            object template = InvokeModelStatic("ET.BTCompiledTreeTemplateBuilder", "Build", "AITest", package);
+
+            Assert.That(package, Is.Not.Null);
+            Assert.That(template, Is.Not.Null);
+
+            object templatePackage = GetValue(template, "Package");
+            Assert.That(templatePackage, Is.Not.Null);
+
+            int treeCount = BTEditorRuntimeBridge.GetList(templatePackage, "Trees").Count;
+            Assert.That(treeCount, Is.EqualTo(BTEditorRuntimeBridge.GetList(package, "Trees").Count));
+
+            object entry = GetEntryByTreeName(template, "AITest");
+            Assert.That(entry, Is.Not.Null);
+
+            object definition = GetValue(entry, "Definition");
+            object root = GetValue(entry, "Root");
+            IDictionary nodes = GetValue(entry, "Nodes") as IDictionary;
+
+            Assert.That(definition, Is.Not.Null);
+            Assert.That(root, Is.Not.Null);
+            Assert.That(root.GetType().Name, Is.EqualTo("BTRoot"));
+            Assert.That(nodes, Is.Not.Null);
+            Assert.That(nodes.Count, Is.EqualTo(BTEditorRuntimeBridge.GetList(definition, "Nodes").Count));
+        }
+
+        [Test]
+        public void BehaviorTree_AITest_CompiledVsBytes_Benchmark()
+        {
+            const int iterations = 80;
+            const int warmupIterations = 5;
+
+            for (int index = 0; index < warmupIterations; ++index)
+            {
+                object warmupPackage = InvokeHotfixStatic("ET.Client.BTClientDemoFactory", "CreateAITestPackage");
+                object warmupTemplate = InvokeModelStatic("ET.BTCompiledTreeTemplateBuilder", "Build", "AITest", warmupPackage);
+                Assert.That(warmupTemplate, Is.Not.Null);
+                byte[] warmupBytes = InvokeHotfixStatic("ET.Client.BTClientDemoFactory", "CreateAITestBytes") as byte[];
+                object warmupRoundTrip = BTEditorRuntimeBridge.DeserializePackage(warmupBytes);
+                Assert.That(warmupRoundTrip, Is.Not.Null);
+            }
+
+            Stopwatch compiledWatch = Stopwatch.StartNew();
+            object template = null;
+            for (int index = 0; index < iterations; ++index)
+            {
+                object package = InvokeHotfixStatic("ET.Client.BTClientDemoFactory", "CreateAITestPackage");
+                template = InvokeModelStatic("ET.BTCompiledTreeTemplateBuilder", "Build", "AITest", package);
+            }
+
+            compiledWatch.Stop();
+
+            byte[] bytes = InvokeHotfixStatic("ET.Client.BTClientDemoFactory", "CreateAITestBytes") as byte[];
+            Stopwatch bytesWatch = Stopwatch.StartNew();
+            object roundTripPackage = null;
+            for (int index = 0; index < iterations; ++index)
+            {
+                roundTripPackage = BTEditorRuntimeBridge.DeserializePackage(bytes);
+            }
+
+            bytesWatch.Stop();
+
+            object compiledPackage = GetValue(template, "Package");
+            int compiledTreeCount = BTEditorRuntimeBridge.GetList(compiledPackage, "Trees").Count;
+            int compiledNodeCount = CountNodes(compiledPackage);
+            int bytesTreeCount = BTEditorRuntimeBridge.GetList(roundTripPackage, "Trees").Count;
+            int bytesNodeCount = CountNodes(roundTripPackage);
+
+            TestContext.WriteLine($"BehaviorTree compiled template benchmark: trees={compiledTreeCount}, nodes={compiledNodeCount}, iterations={iterations}, totalMs={compiledWatch.Elapsed.TotalMilliseconds:F3}, avgMs={compiledWatch.Elapsed.TotalMilliseconds / iterations:F4}");
+            TestContext.WriteLine($"BehaviorTree bytes deserialize benchmark: trees={bytesTreeCount}, nodes={bytesNodeCount}, bytes={bytes?.Length ?? 0}, iterations={iterations}, totalMs={bytesWatch.Elapsed.TotalMilliseconds:F3}, avgMs={bytesWatch.Elapsed.TotalMilliseconds / iterations:F4}");
+        }
+
         [Test]
         public void BehaviorTree_NinoSerializeDeserialize_Benchmark()
         {
@@ -120,6 +197,53 @@ namespace ET
             }
 
             return count;
+        }
+
+        private static object InvokeHotfixStatic(string typeName, string methodName, params object[] arguments)
+        {
+            return InvokeStatic("Unity.Hotfix", typeName, methodName, arguments);
+        }
+
+        private static object InvokeModelStatic(string typeName, string methodName, params object[] arguments)
+        {
+            return InvokeStatic("Unity.Model", typeName, methodName, arguments);
+        }
+
+        private static object InvokeStatic(string assemblyName, string typeName, string methodName, params object[] arguments)
+        {
+            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(currentAssembly => currentAssembly.GetName().Name == assemblyName);
+            Assert.That(assembly, Is.Not.Null, $"Assembly not found: {assemblyName}");
+
+            Type type = assembly.GetType(typeName);
+            Assert.That(type, Is.Not.Null, $"Type not found: {typeName}");
+
+            MethodInfo method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static);
+            Assert.That(method, Is.Not.Null, $"Method not found: {typeName}.{methodName}");
+
+            return method.Invoke(null, arguments);
+        }
+
+        private static object GetValue(object target, string memberName)
+        {
+            FieldInfo fieldInfo = target?.GetType().GetField(memberName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (fieldInfo != null)
+            {
+                return fieldInfo.GetValue(target);
+            }
+
+            PropertyInfo propertyInfo = target?.GetType().GetProperty(memberName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            return propertyInfo?.GetValue(target);
+        }
+
+        private static object GetEntryByTreeName(object template, string treeName)
+        {
+            object entries = GetValue(template, "EntriesByTreeName");
+            MethodInfo tryGetValue = entries?.GetType().GetMethod("TryGetValue");
+            Assert.That(tryGetValue, Is.Not.Null);
+
+            object[] args = { treeName, null };
+            bool found = (bool)tryGetValue.Invoke(entries, args);
+            return found ? args[1] : null;
         }
     }
 }

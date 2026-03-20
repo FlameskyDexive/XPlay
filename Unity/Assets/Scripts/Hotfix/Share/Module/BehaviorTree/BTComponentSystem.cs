@@ -8,6 +8,16 @@ namespace ET
         private static void Awake(this BTComponent self, byte[] treeBytes, string treeIdOrName)
         {
             self.TreeBytes = treeBytes;
+            self.TreePackageKey = string.Empty;
+            self.TreeIdOrName = treeIdOrName;
+            self.StartTree();
+        }
+
+        [EntitySystem]
+        private static void Awake(this BTComponent self, string treePackageKey, string treeIdOrName)
+        {
+            self.TreeBytes = null;
+            self.TreePackageKey = treePackageKey;
             self.TreeIdOrName = treeIdOrName;
             self.StartTree();
         }
@@ -17,6 +27,7 @@ namespace ET
         {
             self.StopTree();
             self.TreeBytes = null;
+            self.TreePackageKey = string.Empty;
             self.TreeIdOrName = null;
             self.BlackboardOverrides.Clear();
         }
@@ -30,6 +41,15 @@ namespace ET
         public static void Reload(this BTComponent self, byte[] treeBytes, string treeIdOrName = "")
         {
             self.TreeBytes = treeBytes;
+            self.TreePackageKey = string.Empty;
+            self.TreeIdOrName = treeIdOrName;
+            self.Restart();
+        }
+
+        public static void Reload(this BTComponent self, string treePackageKey, string treeIdOrName = "")
+        {
+            self.TreeBytes = null;
+            self.TreePackageKey = treePackageKey;
             self.TreeIdOrName = treeIdOrName;
             self.Restart();
         }
@@ -47,17 +67,37 @@ namespace ET
 
         private static void StartTree(this BTComponent self)
         {
-            if (self.TreeBytes == null || self.TreeBytes.Length == 0)
+            Unit unit = self.GetParent<Unit>();
+            BTExecutionSession session = null;
+
+            if (self.TreeBytes != null && self.TreeBytes.Length > 0)
             {
-                Log.Warning($"behavior tree bytes empty: {self.Id}");
+                session = BTRuntime.Create(unit, self.TreeBytes, self.TreeIdOrName);
+            }
+            else if (!string.IsNullOrWhiteSpace(self.TreePackageKey))
+            {
+                if (BTCompiledTreeRegistry.Instance.TryGetTemplate(self.TreePackageKey, out BTCompiledTreeTemplate template))
+                {
+                    session = BTRuntime.Create(unit, template, self.TreeIdOrName);
+                }
+                else
+                {
+                    byte[] bytes = BTLoader.Instance.LoadBytes(self.TreePackageKey, false);
+                    if (bytes != null && bytes.Length > 0)
+                    {
+                        session = BTRuntime.Create(unit, bytes, self.TreeIdOrName);
+                    }
+                }
+            }
+            else
+            {
+                Log.Warning($"behavior tree source empty: {self.Id}");
                 return;
             }
 
-            Unit unit = self.GetParent<Unit>();
-            BTExecutionSession session = BTRuntime.Create(unit, self.TreeBytes, self.TreeIdOrName);
             if (session == null)
             {
-                Log.Error($"behavior tree create failed: {self.TreeIdOrName}");
+                Log.Error($"behavior tree create failed: packageKey={self.TreePackageKey} tree={self.TreeIdOrName}");
                 return;
             }
 

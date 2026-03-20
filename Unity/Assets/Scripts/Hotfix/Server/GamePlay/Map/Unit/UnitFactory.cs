@@ -91,10 +91,9 @@ namespace ET.Server
                 unit.AddComponent<SkillComponent>();
             }
 
-            byte[] behaviorTreeBytes = LoadBehaviorTreeBytes(behaviorTreeName);
-            if (behaviorTreeBytes != null && behaviorTreeBytes.Length > 0)
+            if (!string.IsNullOrWhiteSpace(behaviorTreeName))
             {
-                unit.AddComponent<BTComponent, byte[], string>(behaviorTreeBytes, behaviorTreeName);
+                unit.AddComponent<BTComponent, string, string>(behaviorTreeName, behaviorTreeName);
             }
 
             if (spawnConfigId > 0)
@@ -147,29 +146,6 @@ namespace ET.Server
 
             float radius = Math.Clamp(unit.Config().Weight / 100f, 0.45f, 1.25f);
             unit.AddComponent<CollisionComponent>().AddCollider(EColliderType.Circle, new Vector2(radius, radius), Vector2.Zero, true, unit);
-        }
-
-        private static byte[] LoadBehaviorTreeBytes(string behaviorTreeName)
-        {
-            if (!string.IsNullOrWhiteSpace(behaviorTreeName))
-            {
-                byte[] bytes = BTLoader.Instance.LoadBytes(behaviorTreeName, false);
-                if (bytes != null && bytes.Length > 0)
-                {
-                    return bytes;
-                }
-
-                if (string.Equals(behaviorTreeName, "AITest", StringComparison.OrdinalIgnoreCase))
-                {
-                    bytes = ET.Client.BTClientDemoFactory.CreateAITestBytes();
-                    if (bytes != null && bytes.Length > 0)
-                    {
-                        return bytes;
-                    }
-                }
-            }
-
-            return null;
         }
     }
 }

@@ -31,20 +31,14 @@ namespace ET.Client
                 return;
             }
 
-            byte[] behaviorTreeBytes = BTClientDemoFactory.CreateAITestBytes();
-            if (behaviorTreeBytes == null || behaviorTreeBytes.Length == 0)
-            {
-                return;
-            }
-
             BTComponent behaviorTreeComponent = unit.GetComponent<BTComponent>();
             if (behaviorTreeComponent == null)
             {
-                unit.AddComponent<BTComponent, byte[], string>(behaviorTreeBytes, "AITest");
+                unit.AddComponent<BTComponent, string, string>("AITest", "AITest");
                 return;
             }
 
-            behaviorTreeComponent.Reload(behaviorTreeBytes, "AITest");
+            behaviorTreeComponent.Reload("AITest", "AITest");
         }
     }
 
@@ -67,21 +61,14 @@ namespace ET.Client
                 return;
             }
 
-            byte[] behaviorTreeBytes = BTClientDemoFactory.CreateAITestBytes();
-            if (behaviorTreeBytes == null || behaviorTreeBytes.Length == 0)
-            {
-                await ETTask.CompletedTask;
-                return;
-            }
-
             BTComponent behaviorTreeComponent = unit.GetComponent<BTComponent>();
             if (behaviorTreeComponent == null)
             {
-                unit.AddComponent<BTComponent, byte[], string>(behaviorTreeBytes, "AITest");
+                unit.AddComponent<BTComponent, string, string>("AITest", "AITest");
             }
             else
             {
-                behaviorTreeComponent.Reload(behaviorTreeBytes, "AITest");
+                behaviorTreeComponent.Reload("AITest", "AITest");
             }
 
             await ETTask.CompletedTask;

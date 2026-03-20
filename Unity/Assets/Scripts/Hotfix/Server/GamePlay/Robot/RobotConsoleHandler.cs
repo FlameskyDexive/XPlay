@@ -62,7 +62,13 @@ namespace ET.Server
                 case "LoadTree":
                 {
                     string treeName = ss.Length > 1 ? ss[1] : "AITest";
-                    BTPackage package = BTLoader.Instance.LoadPackage(treeName, false);
+                    BTPackage package = null;
+                    if (BTCompiledTreeRegistry.Instance.TryGetTemplate(treeName, out BTCompiledTreeTemplate template))
+                    {
+                        package = template.Package;
+                    }
+
+                    package ??= BTLoader.Instance.LoadPackage(treeName, false);
                     if (package == null)
                     {
                         Log.Debug($"load behavior tree failed: {treeName}");
@@ -77,14 +83,24 @@ namespace ET.Server
                 {
                     string fileName = ss.Length > 1 ? ss[1] : "AITest";
                     string treeName = ss.Length > 2 ? ss[2] : "AITest";
-                    byte[] bytes = await BTLoader.Instance.LoadBytesAsync(fileName, false);
-                    if (bytes == null || bytes.Length == 0)
+                    BTExecutionSession session = null;
+                    if (BTCompiledTreeRegistry.Instance.TryGetTemplate(fileName, out BTCompiledTreeTemplate template))
                     {
-                        Log.Debug($"run behavior tree failed, bytes empty: {fileName}");
-                        break;
+                        session = BTRuntime.Create(fiber.Root, template, treeName);
                     }
 
-                    BTExecutionSession session = BTRuntime.Create(fiber.Root, bytes, treeName);
+                    if (session == null)
+                    {
+                        byte[] bytes = await BTLoader.Instance.LoadBytesAsync(fileName, false);
+                        if (bytes == null || bytes.Length == 0)
+                        {
+                            Log.Debug($"run behavior tree failed, bytes empty: {fileName}");
+                            break;
+                        }
+
+                        session = BTRuntime.Create(fiber.Root, bytes, treeName);
+                    }
+
                     if (session == null)
                     {
                         Log.Debug($"run behavior tree failed: {fileName}/{treeName}");

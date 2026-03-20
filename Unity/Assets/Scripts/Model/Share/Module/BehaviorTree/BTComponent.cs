@@ -3,9 +3,11 @@ using System.Collections.Generic;
 namespace ET
 {
     [ComponentOf(typeof(Unit))]
-    public class BTComponent : Entity, IAwake<byte[], string>, IDestroy
+    public class BTComponent : Entity, IAwake<byte[], string>, IAwake<string, string>, IDestroy
     {
         public byte[] TreeBytes;
+
+        public string TreePackageKey;
 
         public string TreeIdOrName;
 

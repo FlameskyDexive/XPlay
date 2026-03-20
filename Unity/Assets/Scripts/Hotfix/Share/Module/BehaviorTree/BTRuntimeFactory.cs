@@ -10,6 +10,67 @@ namespace ET
             return package == null ? null : Create(owner, package, treeIdOrName);
         }
 
+        public static BTExecutionSession Create(Entity owner, BTCompiledTreeTemplate template, string treeIdOrName = "")
+        {
+            if (owner == null)
+            {
+                throw new ArgumentNullException(nameof(owner));
+            }
+
+            if (template?.Package == null)
+            {
+                return null;
+            }
+
+            BTCompiledTreeEntryTemplate entry = template.ResolveEntry(treeIdOrName);
+            if (entry?.Definition == null || entry.Root == null)
+            {
+                throw new Exception($"behavior tree compiled entry not found: {treeIdOrName}");
+            }
+
+            BTExecutionSession session = new()
+            {
+                Owner = owner,
+                Package = template.Package,
+                EntryDefinition = entry.Definition,
+                Root = entry.Root,
+            };
+
+            foreach (BTDefinition tree in session.Package.Trees)
+            {
+                if (!string.IsNullOrWhiteSpace(tree.TreeId))
+                {
+                    session.TreeIdMap[tree.TreeId] = tree;
+                }
+
+                if (!string.IsNullOrWhiteSpace(tree.TreeName))
+                {
+                    session.TreeNameMap[tree.TreeName] = tree;
+                }
+            }
+
+            foreach ((int runtimeNodeId, BTNode node) in entry.Nodes)
+            {
+                session.Nodes[runtimeNodeId] = node;
+            }
+
+            session.RuntimeId = IdGenerater.Instance.GenerateInstanceId();
+            session.Blackboard = new BTBlackboard();
+            session.Blackboard.ApplyDefaults(session.EntryDefinition.BlackboardEntries);
+            session.Env = new BTEnv
+            {
+                Owner = owner,
+                RuntimeId = session.RuntimeId,
+                Blackboard = session.Blackboard,
+                Session = session,
+                CurrentTree = session.EntryDefinition,
+                TreeId = session.EntryDefinition.TreeId,
+                TreeName = session.EntryDefinition.TreeName,
+            };
+            session.PublishDebug();
+            return session;
+        }
+
         public static BTExecutionSession Create(Entity owner, BTPackage package, string treeIdOrName = "")
         {
             if (owner == null)

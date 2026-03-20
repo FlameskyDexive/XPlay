@@ -295,6 +295,8 @@ namespace ET
             this.toolbar.Add(this.CreateToolbarButton("New", BTAsset.CreateAsset));
             this.toolbar.Add(this.CreateToolbarButton("Save", () => AssetDatabase.SaveAssets()));
             this.toolbar.Add(this.CreateToolbarButton("Export", this.ExportCurrentAsset));
+            this.toolbar.Add(this.CreateToolbarButton("Export C#", this.ExportCurrentAssetCSharp));
+            this.toolbar.Add(this.CreateToolbarButton("Export Both", this.ExportCurrentAssetBoth));
             this.toolbar.Add(this.CreateToolbarButton("Reveal", this.RevealCurrentAsset));
             this.toolbar.Add(this.CreateToolbarButton("Frame", () => this.graphView?.FrameAllNodes()));
             this.toolbar.Add(this.CreateToolbarButton("Layout", () => this.graphView?.AutoLayoutTree()));
@@ -588,6 +590,7 @@ namespace ET
             EditorGUILayout.LabelField("Tree Id", this.asset.TreeId);
             EditorGUILayout.LabelField("Client Bytes", this.asset.ExportRelativePath);
             EditorGUILayout.LabelField("Server Bytes", Path.Combine("Config/AI", Path.GetFileName(this.asset.ExportRelativePath)));
+            EditorGUILayout.LabelField("Compiled C#", BTCSharpExporter.GetCompiledExportRelativePath(this.asset));
             EditorGUILayout.Space(4);
             EditorGUILayout.LabelField("Description");
             this.asset.Description = EditorGUILayout.TextArea(this.asset.Description, GUILayout.MinHeight(70));
@@ -995,6 +998,45 @@ namespace ET
             }
         }
 
+        private void ExportCurrentAssetCSharp()
+        {
+            if (this.asset == null)
+            {
+                return;
+            }
+
+            try
+            {
+                string fullPath = BTCSharpExporter.ExportToFile(this.asset);
+                EditorUtility.DisplayDialog("BehaviorTree Export C#", $"Generated:\n{fullPath}", "OK");
+            }
+            catch (Exception exception)
+            {
+                EditorUtility.DisplayDialog("BehaviorTree Export C# Failed", GetInnermostException(exception).ToString(), "OK");
+            }
+        }
+
+        private void ExportCurrentAssetBoth()
+        {
+            if (this.asset == null)
+            {
+                return;
+            }
+
+            try
+            {
+                BTExporter.BTExportResult bytesResult = BTExporter.ExportToFiles(this.asset);
+                string codePath = BTCSharpExporter.ExportToFile(this.asset);
+                EditorUtility.DisplayDialog("BehaviorTree Export Both",
+                    $"Client:\n{bytesResult.ClientFullPath}\n\nServer:\n{bytesResult.ServerFullPath}\n\nCompiled:\n{codePath}",
+                    "OK");
+            }
+            catch (Exception exception)
+            {
+                EditorUtility.DisplayDialog("BehaviorTree Export Both Failed", GetInnermostException(exception).ToString(), "OK");
+            }
+        }
+
         private void RevealCurrentAsset()
         {
             if (this.asset == null)
@@ -1005,6 +1047,17 @@ namespace ET
             string projectRoot = Path.GetDirectoryName(Application.dataPath) ?? string.Empty;
             string fullPath = Path.GetFullPath(Path.Combine(projectRoot, this.asset.ExportRelativePath));
             EditorUtility.RevealInFinder(fullPath);
+        }
+
+        private static Exception GetInnermostException(Exception exception)
+        {
+            Exception currentException = exception;
+            while (currentException?.InnerException != null)
+            {
+                currentException = currentException.InnerException;
+            }
+
+            return currentException ?? exception;
         }
 
         private void DrawDescriptorNode(BTEditorNodeData node, ABTNodeDescriptor descriptor, bool drawInterval = false)

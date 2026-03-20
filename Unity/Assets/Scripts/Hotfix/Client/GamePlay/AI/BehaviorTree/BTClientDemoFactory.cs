@@ -2,7 +2,7 @@ namespace ET.Client
 {
     public static class BTClientDemoFactory
     {
-        public static byte[] CreateAITestBytes()
+        public static BTPackage CreateAITestPackage()
         {
             BTDefinition tree = new()
             {
@@ -250,7 +250,12 @@ namespace ET.Client
                 Trees = { tree },
             };
 
-            return BTSerializer.Serialize(package);
+            return package;
+        }
+
+        public static byte[] CreateAITestBytes()
+        {
+            return BTSerializer.Serialize(CreateAITestPackage());
         }
 
         private static BTActionNodeData CreateAction(string nodeId, string title, string typeId, string handlerName)
