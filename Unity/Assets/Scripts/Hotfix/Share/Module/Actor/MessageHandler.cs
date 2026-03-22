@@ -27,7 +27,7 @@ namespace ET
         {
             if (typeof (ILocationMessage).IsAssignableFrom(typeof (Message)))
             {
-                Log.Error($"message is IActorLocationMessage but handler is AMActorHandler: {typeof (Message)}");
+                Log.Error($"message implements ILocationMessage but handler is MessageHandler: {typeof (Message)}");
             }
 
             return typeof (Message);
@@ -90,7 +90,7 @@ namespace ET
         {
             if (typeof (ILocationRequest).IsAssignableFrom(typeof (Request)))
             {
-                Log.Error($"message is IActorLocationMessage but handler is AMActorRpcHandler: {typeof (Request)}");
+                Log.Error($"request implements ILocationRequest but handler is MessageHandler: {typeof (Request)}");
             }
 
             return typeof (Request);

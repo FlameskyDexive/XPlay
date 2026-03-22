@@ -1,7 +1,7 @@
 namespace ET.Server
 {
-    [MessageHandler(SceneType.Match)]
-    public class G2Match_JoinRoomHandler : MessageHandler<Scene, G2Match_JoinRoom, Match2G_JoinRoom>
+    [MessageLocationHandler(SceneType.Match)]
+    public class G2Match_JoinRoomHandler : MessageLocationHandler<Scene, G2Match_JoinRoom, Match2G_JoinRoom>
     {
         protected override async ETTask Run(Scene scene, G2Match_JoinRoom request, Match2G_JoinRoom response)
         {

@@ -1,7 +1,7 @@
 namespace ET.Server
 {
-    [MessageHandler(SceneType.Match)]
-    public class G2Match_CancelMatchHandler : MessageHandler<Scene, G2Match_CancelMatch, Match2G_CancelMatch>
+    [MessageLocationHandler(SceneType.Match)]
+    public class G2Match_CancelMatchHandler : MessageLocationHandler<Scene, G2Match_CancelMatch, Match2G_CancelMatch>
     {
         protected override async ETTask Run(Scene scene, G2Match_CancelMatch request, Match2G_CancelMatch response)
         {

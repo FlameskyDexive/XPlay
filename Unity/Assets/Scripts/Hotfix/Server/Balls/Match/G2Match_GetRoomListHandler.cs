@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 namespace ET.Server
 {
-    [MessageHandler(SceneType.Match)]
-    public class G2Match_GetRoomListHandler : MessageHandler<Scene, G2Match_GetRoomList, Match2G_GetRoomList>
+    [MessageLocationHandler(SceneType.Match)]
+    public class G2Match_GetRoomListHandler : MessageLocationHandler<Scene, G2Match_GetRoomList, Match2G_GetRoomList>
     {
         protected override async ETTask Run(Scene scene, G2Match_GetRoomList request, Match2G_GetRoomList response)
         {

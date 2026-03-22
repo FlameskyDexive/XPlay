@@ -14,8 +14,8 @@ namespace ET.Client
 		{
 			self.View.EEnterMapButton.AddListenerAsync(self.Root(), self.EnterMap);
 			self.View.EMatchButton.AddListenerAsync(self.Root(), self.Match);
-			self.View.ECreateRoomButton.AddListener(self.Root(), self.OnCreateRoomClick);
-			self.View.ERoomListButton.AddListener(self.Root(), self.OnRoomListClick);
+			// self.View.ECreateRoomButton.AddListener(self.Root(), self.OnCreateRoomClick);
+			// self.View.ERoomListButton.AddListener(self.Root(), self.OnRoomListClick);
 		}
 
 		public static void ShowWindow(this DlgLobby self, Entity contextData = null)
