@@ -1,0 +1,250 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49fe161aa474a6840999206788f922b7, type: 3}
+  m_Name: ai_monster_01
+  m_EditorClassIdentifier: Unity.Editor::ET.BTAsset
+  TreeId: 5d422de7984f4c4ea0c5a5f1d9abfb26
+  TreeName: ai_monster_01
+  Description: 
+  ExportRelativePath: Assets/Bundles/AI/Bytes/ai_monster_01.bytes
+  BlackboardEntries: []
+  Nodes:
+  - NodeId: fb8cdf410a644eb6b9a73d6a26fb975d
+    Title: Root
+    NodeKind: 0
+    NodeTypeId: 
+    Position:
+      serializedVersion: 2
+      x: 84
+      y: 73
+      width: 73
+      height: 55
+    ChildIds:
+    - 5a8b257bff56485ea14994e2eb6ba77e
+    HandlerName: 
+    Arguments: []
+    BlackboardKey: 
+    CompareOperator: 0
+    CompareValue:
+      ValueType: 0
+      IntValue: 0
+      LongValue: 0
+      FloatValue: 0
+      BoolValue: 0
+      StringValue: 
+    AbortMode: 1
+    WaitMilliseconds: 1000
+    IntervalMilliseconds: 250
+    MaxLoopCount: 0
+    SuccessPolicy: 1
+    FailurePolicy: 0
+    Comment: 
+    SubTreeId: 
+    SubTreeName: 
+    PatrolPoints: []
+    SubTreeAsset: {fileID: 0}
+  - NodeId: 5a8b257bff56485ea14994e2eb6ba77e
+    Title: Repeater
+    NodeKind: 7
+    NodeTypeId: 
+    Position:
+      serializedVersion: 2
+      x: 70
+      y: 183
+      width: 98
+      height: 69
+    ChildIds:
+    - 4c82ef7295d74935a3f92523120371a3
+    HandlerName: 
+    Arguments: []
+    BlackboardKey: 
+    CompareOperator: 0
+    CompareValue:
+      ValueType: 0
+      IntValue: 0
+      LongValue: 0
+      FloatValue: 0
+      BoolValue: 0
+      StringValue: 
+    AbortMode: 1
+    WaitMilliseconds: 1000
+    IntervalMilliseconds: 250
+    MaxLoopCount: 0
+    SuccessPolicy: 1
+    FailurePolicy: 0
+    Comment: 
+    SubTreeId: 
+    SubTreeName: 
+    PatrolPoints: []
+    SubTreeAsset: {fileID: 0}
+  - NodeId: 4c82ef7295d74935a3f92523120371a3
+    Title: Sequence
+    NodeKind: 1
+    NodeTypeId: 
+    Position:
+      serializedVersion: 2
+      x: 65
+      y: 296
+      width: 103
+      height: 55
+    ChildIds:
+    - 475e275efde24a498117b016508a5a79
+    - c7f1f0a60d5b4208b9f6e6b1c45d5b2c
+    - 9e36eb277f4a40d185a4d4a10bdf012c
+    HandlerName: 
+    Arguments: []
+    BlackboardKey: 
+    CompareOperator: 0
+    CompareValue:
+      ValueType: 0
+      IntValue: 0
+      LongValue: 0
+      FloatValue: 0
+      BoolValue: 0
+      StringValue: 
+    AbortMode: 1
+    WaitMilliseconds: 1000
+    IntervalMilliseconds: 250
+    MaxLoopCount: 0
+    SuccessPolicy: 1
+    FailurePolicy: 0
+    Comment: 
+    SubTreeId: 
+    SubTreeName: 
+    PatrolPoints: []
+    SubTreeAsset: {fileID: 0}
+  - NodeId: 9e36eb277f4a40d185a4d4a10bdf012c
+    Title: Move To Range
+    NodeKind: 10
+    NodeTypeId: combat.action.move_to_range
+    Position:
+      serializedVersion: 2
+      x: 280
+      y: 409
+      width: 143
+      height: 95
+    ChildIds: []
+    HandlerName: BTMoveToCombatRange
+    Arguments:
+    - Name: range
+      Value:
+        ValueType: 3
+        IntValue: 0
+        LongValue: 0
+        FloatValue: 30
+        BoolValue: 0
+        StringValue: 
+    - Name: tickIntervalMs
+      Value:
+        ValueType: 1
+        IntValue: 200
+        LongValue: 0
+        FloatValue: 0
+        BoolValue: 0
+        StringValue: 
+    BlackboardKey: 
+    CompareOperator: 0
+    CompareValue:
+      ValueType: 0
+      IntValue: 0
+      LongValue: 0
+      FloatValue: 0
+      BoolValue: 0
+      StringValue: 
+    AbortMode: 1
+    WaitMilliseconds: 1000
+    IntervalMilliseconds: 250
+    MaxLoopCount: 0
+    SuccessPolicy: 1
+    FailurePolicy: 0
+    Comment: 
+    SubTreeId: 
+    SubTreeName: 
+    PatrolPoints: []
+    SubTreeAsset: {fileID: 0}
+  - NodeId: c7f1f0a60d5b4208b9f6e6b1c45d5b2c
+    Title: Find Target
+    NodeKind: 10
+    NodeTypeId: combat.action.find_target
+    Position:
+      serializedVersion: 2
+      x: 107
+      y: 409
+      width: 122
+      height: 82
+    ChildIds: []
+    HandlerName: BTFindCombatTarget
+    Arguments:
+    - Name: maxRange
+      Value:
+        ValueType: 3
+        IntValue: 0
+        LongValue: 0
+        FloatValue: 500
+        BoolValue: 0
+        StringValue: 
+    BlackboardKey: 
+    CompareOperator: 0
+    CompareValue:
+      ValueType: 0
+      IntValue: 0
+      LongValue: 0
+      FloatValue: 0
+      BoolValue: 0
+      StringValue: 
+    AbortMode: 1
+    WaitMilliseconds: 1000
+    IntervalMilliseconds: 250
+    MaxLoopCount: 0
+    SuccessPolicy: 1
+    FailurePolicy: 0
+    Comment: 
+    SubTreeId: 
+    SubTreeName: 
+    PatrolPoints: []
+    SubTreeAsset: {fileID: 0}
+  - NodeId: 475e275efde24a498117b016508a5a79
+    Title: Wait
+    NodeKind: 12
+    NodeTypeId: 
+    Position:
+      serializedVersion: 2
+      x: -23
+      y: 409
+      width: 88
+      height: 69
+    ChildIds: []
+    HandlerName: 
+    Arguments: []
+    BlackboardKey: 
+    CompareOperator: 0
+    CompareValue:
+      ValueType: 0
+      IntValue: 0
+      LongValue: 0
+      FloatValue: 0
+      BoolValue: 0
+      StringValue: 
+    AbortMode: 1
+    WaitMilliseconds: 5000
+    IntervalMilliseconds: 250
+    MaxLoopCount: 0
+    SuccessPolicy: 1
+    FailurePolicy: 0
+    Comment: 
+    SubTreeId: 
+    SubTreeName: 
+    PatrolPoints: []
+    SubTreeAsset: {fileID: 0}
+  RootNodeId: fb8cdf410a644eb6b9a73d6a26fb975d
+  ViewPosition: {x: 0, y: 0, z: 0}
+  ViewScale: {x: 1, y: 1, z: 1}

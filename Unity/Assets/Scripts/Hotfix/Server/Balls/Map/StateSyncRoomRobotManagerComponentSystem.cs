@@ -64,12 +64,18 @@ namespace ET.Server
             Unit unit = roomPlayer.Unit;
             if (unit == null || unit.IsDisposed)
             {
-                unit = UnitFactory.Create(root, roomPlayer.Id, EUnitType.Monster);
+                unit = UnitFactory.CreateMonster(root,
+                    roomPlayer.Id,
+                    ConstValue.StateSyncMatchRobotUnitConfigId,
+                    new[] { ConstValue.StateSyncMatchRobotSkillId },
+                    ConstValue.StateSyncMatchRobotBehaviorTree);
                 roomPlayer.Unit = unit;
+                Log.Info($"[MatchRobot] create unit:{roomPlayer.Id} tree:{ConstValue.StateSyncMatchRobotBehaviorTree} config:{ConstValue.StateSyncMatchRobotUnitConfigId}");
             }
 
             unit.Position = spawnPosition;
             unit.Forward = spawnForward;
+            Log.Info($"[MatchRobot] spawn unit:{roomPlayer.Id} position:{spawnPosition} forward:{spawnForward}");
 
             UnitInfo unitInfo = UnitHelper.CreateUnitInfo(unit);
             self.FillSkillInfo(unitInfo, unit.GetComponent<SkillComponent>());

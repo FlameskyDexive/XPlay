@@ -1,3 +1,4 @@
+using System;
 using Unity.Mathematics;
 
 namespace ET
@@ -100,6 +101,10 @@ namespace ET
 
             float desiredRange = math.max(0.1f, context.GetFloatArgument(node.Definition, "range", 2.5f));
             int tickIntervalMs = context.GetIntArgument(node.Definition, "tickIntervalMs", 100);
+            if (ShouldTrace(context))
+            {
+                Log.Info($"[MatchRobotAI][{context.TreeName}] move_to_range start unit:{unit.Id} desiredRange:{desiredRange:F2} tick:{tickIntervalMs}");
+            }
 
             try
             {
@@ -116,6 +121,10 @@ namespace ET
                     context.SyncCombatBlackboard(unit);
                     if (!context.TryResolveValidCombatTarget(unit, out Unit target))
                     {
+                        if (ShouldTrace(context))
+                        {
+                            Log.Info($"[MatchRobotAI][{context.TreeName}] move_to_range failed no target unit:{unit.Id}");
+                        }
                         BTCombatHelper.StopMove(unit);
                         BTFlowDriver.Resume(session, node.RuntimeNodeId, BTExecResult.Failure);
                         return;
@@ -125,6 +134,10 @@ namespace ET
                     context.Blackboard.Set(BTCombatBlackboardKeys.TargetDistance, distance);
                     if (distance <= desiredRange)
                     {
+                        if (ShouldTrace(context))
+                        {
+                            Log.Info($"[MatchRobotAI][{context.TreeName}] move_to_range success unit:{unit.Id} target:{target.Id} distance:{distance:F2}");
+                        }
                         BTCombatHelper.StopMove(unit);
                         BTFlowDriver.Resume(session, node.RuntimeNodeId, BTExecResult.Success);
                         return;
@@ -133,8 +146,17 @@ namespace ET
                     BTCombatHelper.FaceTarget(unit, target);
                     if (!BTCombatHelper.TryStartMove(unit))
                     {
+                        if (ShouldTrace(context))
+                        {
+                            Log.Info($"[MatchRobotAI][{context.TreeName}] move_to_range failed start_move unit:{unit.Id} target:{target.Id}");
+                        }
                         BTFlowDriver.Resume(session, node.RuntimeNodeId, BTExecResult.Failure);
                         return;
+                    }
+
+                    if (ShouldTrace(context))
+                    {
+                        Log.Info($"[MatchRobotAI][{context.TreeName}] moving unit:{unit.Id} target:{target.Id} distance:{distance:F2} forward:{unit.Forward}");
                     }
 
                     await timerComponent.WaitAsync(tickIntervalMs, tokenState.Token);
@@ -148,6 +170,11 @@ namespace ET
                     BTCombatHelper.StopMove(finalUnit);
                 }
             }
+        }
+
+        private static bool ShouldTrace(BTExecutionContext context)
+        {
+            return context != null && string.Equals(context.TreeName, ConstValue.StateSyncMatchRobotBehaviorTree, StringComparison.OrdinalIgnoreCase);
         }
     }
 

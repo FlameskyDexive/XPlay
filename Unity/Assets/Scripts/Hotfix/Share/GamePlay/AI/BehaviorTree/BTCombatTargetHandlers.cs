@@ -1,3 +1,4 @@
+using System;
 using Unity.Mathematics;
 
 namespace ET
@@ -18,12 +19,26 @@ namespace ET
             Unit target = TargetSelectHelper.FindNearestCombatTarget(unit, maxRange <= 0f ? float.MaxValue : maxRange);
             if (target == null)
             {
+                if (ShouldTrace(context))
+                {
+                    Log.Info($"[MatchRobotAI][{context.TreeName}] target not found unit:{unit.Id} maxRange:{maxRange}");
+                }
                 context.ClearCombatTarget(unit);
                 return BTExecResult.Failure;
             }
 
+            if (ShouldTrace(context))
+            {
+                float distance = TargetSelectHelper.GetDistance(unit, target);
+                Log.Info($"[MatchRobotAI][{context.TreeName}] target found unit:{unit.Id} target:{target.Id} distance:{distance:F2}");
+            }
             context.SetCombatTarget(unit, target);
             return BTExecResult.Success;
+        }
+
+        private static bool ShouldTrace(BTExecutionContext context)
+        {
+            return context != null && string.Equals(context.TreeName, ConstValue.StateSyncMatchRobotBehaviorTree, StringComparison.OrdinalIgnoreCase);
         }
     }
 

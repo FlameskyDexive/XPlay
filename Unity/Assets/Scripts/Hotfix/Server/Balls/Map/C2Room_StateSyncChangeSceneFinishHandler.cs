@@ -61,7 +61,9 @@ namespace ET.Server
                     continue;
                 }
 
-                float3 spawnPosition = new float3(RandomGenerator.RandomNumber(-3, 3), 0, RandomGenerator.RandomNumber(-3, 3));
+                float3 spawnPosition = roomRobotManagerComponent != null && roomRobotManagerComponent.IsRobotPlayer(rp.Id)
+                        ? GetRobotSpawnPosition()
+                        : new float3(RandomGenerator.RandomNumber(-3, 3), 0, RandomGenerator.RandomNumber(-3, 3));
                 float3 spawnForward = new float3(0, 0, 1);
 
                 UnitInfo unitInfo = roomRobotManagerComponent != null && roomRobotManagerComponent.IsRobotPlayer(rp.Id)
@@ -109,6 +111,15 @@ namespace ET.Server
             playerInfo.AvatarIndex = RandomGenerator.RandomNumber(0, 9);
             unitInfo.PlayerInfo = playerInfo;
             return unitInfo;
+        }
+
+        private static float3 GetRobotSpawnPosition()
+        {
+            int xSign = RandomGenerator.RandomNumber(0, 2) == 0 ? -1 : 1;
+            int zSign = RandomGenerator.RandomNumber(0, 2) == 0 ? -1 : 1;
+            float x = RandomGenerator.RandomNumber(ConstValue.StateSyncMatchRobotSpawnMinDistance, ConstValue.StateSyncMatchRobotSpawnMaxDistance + 1) * xSign;
+            float z = RandomGenerator.RandomNumber(ConstValue.StateSyncMatchRobotSpawnMinDistance, ConstValue.StateSyncMatchRobotSpawnMaxDistance + 1) * zSign;
+            return new float3(x, 0, z);
         }
     }
 }

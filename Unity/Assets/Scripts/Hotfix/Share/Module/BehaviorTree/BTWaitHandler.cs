@@ -35,6 +35,11 @@ namespace ET
             }
 
             BTCoroutineTokenState tokenState = BTFlowDriver.StartToken(session, node);
+            BTExecutionContext context = env.BindContext(node);
+            if (ShouldTrace(context))
+            {
+                Log.Info($"[MatchRobotAI][{context.TreeName}] wait start runtime:{context.RuntimeId} ms:{((BTWaitNodeData)node.Definition).WaitMilliseconds}");
+            }
             session.SetState(node, BTNodeState.Running);
             RunWaitAsync(session, node, timerComponent, tokenState.Version).Coroutine();
             return BTExecResult.Running;
@@ -61,6 +66,11 @@ namespace ET
                     return;
                 }
 
+                BTExecutionContext context = session.Env.BindContext(node);
+                if (ShouldTrace(context))
+                {
+                    Log.Info($"[MatchRobotAI][{context.TreeName}] wait end runtime:{context.RuntimeId} ms:{definition.WaitMilliseconds}");
+                }
                 BTFlowDriver.Resume(session, node.RuntimeNodeId, BTExecResult.Success);
             }
             catch (Exception exception)
@@ -73,6 +83,11 @@ namespace ET
                 session.LogException(exception, node);
                 BTFlowDriver.Resume(session, node.RuntimeNodeId, BTExecResult.Failure);
             }
+        }
+
+        private static bool ShouldTrace(BTExecutionContext context)
+        {
+            return context != null && string.Equals(context.TreeName, ConstValue.StateSyncMatchRobotBehaviorTree, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
