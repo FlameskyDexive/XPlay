@@ -36,10 +36,10 @@ namespace ET
             new("Decorators/Repeater", BTNodeKind.Repeater),
             new("Decorators/Blackboard Condition", BTNodeKind.BlackboardCondition),
             new("Decorators/SubTree", BTNodeKind.SubTree),
-            new("Behaviors/Common/Wait", BTNodeKind.Wait),
-            new("Behaviors/Legacy/Custom Action", BTNodeKind.Action),
-            new("Conditions/Legacy/Custom Condition", BTNodeKind.Condition),
-            new("Services/Legacy/Custom Service", BTNodeKind.Service),
+            new("Actions/Wait", BTNodeKind.Wait),
+            new("Actions/Custom Action", BTNodeKind.Action),
+            new("Conditions/Custom Condition", BTNodeKind.Condition),
+            new("Actions/Custom Service", BTNodeKind.Service),
         };
 
         private Texture2D indentationIcon;
@@ -66,7 +66,8 @@ namespace ET
             };
 
             HashSet<string> createdGroups = new(StringComparer.OrdinalIgnoreCase);
-            foreach (SearchNodeEntry entry in GetSearchEntries())
+            foreach (SearchNodeEntry entry in GetSearchEntries()
+                         .OrderBy(currentEntry => currentEntry.MenuPath, StringComparer.OrdinalIgnoreCase))
             {
                 string[] segments = entry.MenuPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 for (int index = 0; index < segments.Length - 1; ++index)

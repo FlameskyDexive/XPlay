@@ -22,15 +22,13 @@ namespace ET.Client
 		public static void ShowWindow(this DlgMatchTeam self, Entity contextData = null)
 		{
 			self.IsMatching = false;
-
-			if (self.MemberIds.Count <= 0)
-			{
-				long myId = self.Root().GetComponent<PlayerComponent>().MyId;
-				self.MemberIds.Add(myId);
-			}
+            self.MemberIds.Clear();
+            long myId = self.Root().GetComponent<PlayerComponent>().MyId;
+            self.MemberIds.Add(myId);
 
 			self.RefreshMembers();
 			self.View.ECountDownText.text = string.Empty;
+            self.StartMatchAsync().Coroutine();
 		}
 
 
@@ -60,14 +58,12 @@ namespace ET.Client
                 return;
             }
 
-            self.IsMatching = true;
-            self.StartCountDown().Coroutine();
+            self.StartMatchAsync().Coroutine();
         }
 
         public static void OnCancelClick(this DlgMatchTeam self)
         {
-            self.IsMatching = false;
-            self.Root().GetComponent<UIComponent>().HideWindow(WindowID.WindowID_MatchTeam);
+            self.CancelMatchAsync().Coroutine();
         }
 
 		public static void RefreshMembers(this DlgMatchTeam self)
@@ -81,8 +77,17 @@ namespace ET.Client
 
 		public static async ETTask StartCountDown(this DlgMatchTeam self)
 		{
-			for (int i = 5; i > 0; i--)
+            Scene root = self.Root();
+            EntityRef<DlgMatchTeam> selfRef = self;
+
+			for (int i = ConstValue.StateSyncMatchTimeoutTime / 1000; i > 0; i--)
 			{
+                self = selfRef;
+                if (self == null || self.IsDisposed)
+                {
+                    return;
+                }
+
 				if (!self.IsMatching)
 				{
 					self.View.ECountDownText.text = string.Empty;
@@ -90,14 +95,68 @@ namespace ET.Client
 				}
 
                 self.View.ECountDownText.text = i.ToString();
-                await self.Root().GetComponent<TimerComponent>().WaitAsync(1000);
+                await root.GetComponent<TimerComponent>().WaitAsync(1000);
+            }
+
+            self = selfRef;
+            if (self == null || self.IsDisposed)
+            {
+                return;
             }
 
 			self.View.ECountDownText.text = string.Empty;
+        }
 
-            await self.Root().GetComponent<TimerComponent>().WaitAsync(500);
+        private static async ETTask StartMatchAsync(this DlgMatchTeam self)
+        {
+            EntityRef<DlgMatchTeam> selfRef = self;
+            self.IsMatching = true;
+            try
+            {
+                await EnterMapHelper.StateSyncMatch(self.Fiber());
+            }
+            catch (Exception)
+            {
+                self = selfRef;
+                if (self == null || self.IsDisposed)
+                {
+                    return;
+                }
 
+                self.IsMatching = false;
+                self.View.ECountDownText.text = string.Empty;
+                return;
+            }
+
+            self = selfRef;
+            if (self == null || self.IsDisposed || !self.IsMatching)
+            {
+                return;
+            }
+
+            self.StartCountDown().Coroutine();
+        }
+
+        private static async ETTask CancelMatchAsync(this DlgMatchTeam self)
+        {
+            bool wasMatching = self.IsMatching;
             self.IsMatching = false;
+            self.View.ECountDownText.text = string.Empty;
+            self.Root().GetComponent<UIComponent>().HideWindow(WindowID.WindowID_MatchTeam);
+
+            if (!wasMatching)
+            {
+                return;
+            }
+
+            try
+            {
+                await EnterMapHelper.CancelMatchAsync(self.Fiber());
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
         }
 
     }

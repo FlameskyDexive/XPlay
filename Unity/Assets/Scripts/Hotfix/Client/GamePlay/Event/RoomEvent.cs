@@ -44,6 +44,10 @@ namespace ET.Client
         public string Message;
     }
 
+    public struct StateSyncMatchSuccess
+    {
+    }
+
     public struct GetRoomListSuccess
     {
         public List<RoomInfo> RoomList;

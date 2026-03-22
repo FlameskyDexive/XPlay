@@ -8,6 +8,8 @@ namespace ET.Server
 
         public bool IsOnline { get; set; } = true;
 
+        public bool IsRobot { get; set; }
+
         public bool IsCreator { get; set; }
 
         public bool IsReady { get; set; }

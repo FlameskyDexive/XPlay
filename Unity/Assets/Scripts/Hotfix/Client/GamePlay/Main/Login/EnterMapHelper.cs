@@ -43,6 +43,7 @@ namespace ET.Client
             catch (Exception e)
             {
                 Log.Error(e);
+                throw;
             }
         }
 

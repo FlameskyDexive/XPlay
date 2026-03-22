@@ -36,7 +36,7 @@ namespace ET.Server
 
             foreach (StateSyncRoomPlayer roomPlayer in self.Children.Values)
             {
-                if (roomPlayer.IsOnline)
+                if (roomPlayer.IsOnline || roomPlayer.IsRobot)
                 {
                     Unit unit = roomPlayer.Unit;
                     if (unit == null)

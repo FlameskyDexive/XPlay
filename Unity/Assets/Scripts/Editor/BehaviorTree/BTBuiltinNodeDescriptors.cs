@@ -9,7 +9,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Common/Log";
+        public override string MenuPath => "Actions/Log";
 
         public override string HandlerName => "Log";
 
@@ -39,7 +39,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Blackboard/Set Value";
+        public override string MenuPath => "Actions/Set Value";
 
         public override string HandlerName => "SetBlackboard";
 
@@ -91,7 +91,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Blackboard/Set If Missing";
+        public override string MenuPath => "Actions/Set If Missing";
 
         public override string HandlerName => "SetBlackboardIfMissing";
 
@@ -132,7 +132,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Condition;
 
-        public override string MenuPath => "Conditions/Blackboard/Is Set";
+        public override string MenuPath => "Conditions/Is Set";
 
         public override string HandlerName => "BlackboardExists";
 
@@ -162,7 +162,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Condition;
 
-        public override string MenuPath => "Conditions/Blackboard/Compare";
+        public override string MenuPath => "Conditions/Compare";
 
         public override string HandlerName => "BlackboardCompare";
 

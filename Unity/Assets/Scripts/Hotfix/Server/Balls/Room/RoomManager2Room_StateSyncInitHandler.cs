@@ -11,6 +11,12 @@ namespace ET.Server
             room.Name = "Server";
             room.AddComponent<StateSyncRoomServerComponent, List<long>>(request.PlayerIds);
 
+            int robotCount = ConstValue.StateSyncMatchCount - request.PlayerIds.Count;
+            if (robotCount > 0)
+            {
+                room.AddComponent<StateSyncRoomRobotManagerComponent>().CreateMatchRobots(robotCount);
+            }
+
             await ETTask.CompletedTask;
         }
     }

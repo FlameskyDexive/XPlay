@@ -9,7 +9,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Combat/Find Target";
+        public override string MenuPath => "Actions/Find Target";
 
         public override string HandlerName => "BTFindCombatTarget";
 
@@ -38,7 +38,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Condition;
 
-        public override string MenuPath => "Conditions/Combat/Validate Target";
+        public override string MenuPath => "Conditions/Validate Target";
 
         public override string HandlerName => "BTValidateCombatTarget";
 
@@ -67,7 +67,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Combat/Clear Invalid Target";
+        public override string MenuPath => "Actions/Clear Invalid Target";
 
         public override string HandlerName => "BTClearInvalidTarget";
 
@@ -81,7 +81,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Combat/Set Combat State";
+        public override string MenuPath => "Actions/Set Combat State";
 
         public override string HandlerName => "BTSetCombatState";
 
@@ -111,7 +111,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Combat/Stop Move";
+        public override string MenuPath => "Actions/Stop Move";
 
         public override string HandlerName => "BTStopMove";
 
@@ -125,7 +125,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Combat/Move To Range";
+        public override string MenuPath => "Actions/Move To Range";
 
         public override string HandlerName => "BTMoveToCombatRange";
 
@@ -165,7 +165,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Combat/Retreat From Target";
+        public override string MenuPath => "Actions/Retreat From Target";
 
         public override string HandlerName => "BTRetreatFromCombatTarget";
 
@@ -216,7 +216,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Combat/Face Target";
+        public override string MenuPath => "Actions/Face Target";
 
         public override string HandlerName => "BTFaceTarget";
 
@@ -230,7 +230,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Combat/Select Skill";
+        public override string MenuPath => "Actions/Select Skill";
 
         public override string HandlerName => "BTSelectSkill";
 
@@ -259,7 +259,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Condition;
 
-        public override string MenuPath => "Conditions/Combat/Can Cast Selected Skill";
+        public override string MenuPath => "Conditions/Can Cast Selected Skill";
 
         public override string HandlerName => "BTCanCastSelectedSkill";
 
@@ -273,7 +273,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Condition;
 
-        public override string MenuPath => "Conditions/Combat/Check State Change Result";
+        public override string MenuPath => "Conditions/Check State Change Result";
 
         public override string HandlerName => "BTCheckStateChangeResult";
 
@@ -303,7 +303,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Condition;
 
-        public override string MenuPath => "Conditions/Combat/In Control";
+        public override string MenuPath => "Conditions/In Control";
 
         public override string HandlerName => "BTInControl";
 
@@ -317,7 +317,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Combat/Cast Selected Skill";
+        public override string MenuPath => "Actions/Cast Selected Skill";
 
         public override string HandlerName => "BTCastSelectedSkill";
 
@@ -331,7 +331,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Action;
 
-        public override string MenuPath => "Behaviors/Combat/Wait Cast Complete";
+        public override string MenuPath => "Actions/Wait Cast Complete";
 
         public override string HandlerName => "BTWaitCastComplete";
 
@@ -371,7 +371,7 @@ namespace ET
 
         public override BTNodeKind NodeKind => BTNodeKind.Condition;
 
-        public override string MenuPath => "Conditions/Combat/Need Retreat";
+        public override string MenuPath => "Conditions/Need Retreat";
 
         public override string HandlerName => "BTNeedRetreat";
 
