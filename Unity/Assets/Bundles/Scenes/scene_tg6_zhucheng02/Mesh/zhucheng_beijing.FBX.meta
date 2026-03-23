@@ -1,0 +1,234 @@
+fileFormatVersion: 2
+guid: a236fd08d28e91740b912aa735479aab
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: zhucheng_beijing00
+    100004: zhucheng_beijing01
+    100006: zhucheng_beijing02
+    100008: zhucheng_beijing03
+    100010: zhucheng_beijing04
+    100012: zhucheng_beijing05
+    100014: zhucheng_beijing06
+    100016: zhucheng_beijing07
+    100018: zhucheng_beijing08
+    100020: zhucheng_beijing09
+    100022: zhucheng_beijing10
+    100024: zhucheng_beijing11
+    100026: zhucheng_beijing12
+    100028: zhucheng_beijing13
+    100030: zhucheng_beijing14
+    100032: zhucheng_beijing15
+    100034: zhucheng_beijing16
+    100036: zhucheng_beijing17
+    100038: zhucheng_beijing18
+    100040: MianPian001
+    100042: MianPian002
+    100044: MianPian003
+    100046: MianPian004
+    100048: MianPian005
+    100050: MianPian006
+    100052: MianPian007
+    100054: MianPian008
+    100056: MianPian009
+    400000: //RootNode
+    400002: zhucheng_beijing00
+    400004: zhucheng_beijing01
+    400006: zhucheng_beijing02
+    400008: zhucheng_beijing03
+    400010: zhucheng_beijing04
+    400012: zhucheng_beijing05
+    400014: zhucheng_beijing06
+    400016: zhucheng_beijing07
+    400018: zhucheng_beijing08
+    400020: zhucheng_beijing09
+    400022: zhucheng_beijing10
+    400024: zhucheng_beijing11
+    400026: zhucheng_beijing12
+    400028: zhucheng_beijing13
+    400030: zhucheng_beijing14
+    400032: zhucheng_beijing15
+    400034: zhucheng_beijing16
+    400036: zhucheng_beijing17
+    400038: zhucheng_beijing18
+    400040: MianPian001
+    400042: MianPian002
+    400044: MianPian003
+    400046: MianPian004
+    400048: MianPian005
+    400050: MianPian006
+    400052: MianPian007
+    400054: MianPian008
+    400056: MianPian009
+    2100000: 'Material #26'
+    2100002: 'Material #25'
+    2100004: 01 - Default
+    2100006: 'Material #27'
+    2300000: zhucheng_beijing00
+    2300002: zhucheng_beijing01
+    2300004: zhucheng_beijing02
+    2300006: zhucheng_beijing03
+    2300008: zhucheng_beijing04
+    2300010: zhucheng_beijing05
+    2300012: zhucheng_beijing06
+    2300014: zhucheng_beijing07
+    2300016: zhucheng_beijing08
+    2300018: zhucheng_beijing09
+    2300020: zhucheng_beijing10
+    2300022: zhucheng_beijing11
+    2300024: zhucheng_beijing12
+    2300026: zhucheng_beijing13
+    2300028: zhucheng_beijing14
+    2300030: zhucheng_beijing15
+    2300032: zhucheng_beijing16
+    2300034: zhucheng_beijing17
+    2300036: MianPian001
+    2300038: MianPian002
+    2300040: MianPian003
+    2300042: MianPian004
+    2300044: MianPian005
+    2300046: MianPian006
+    2300048: MianPian007
+    2300050: MianPian008
+    2300052: MianPian009
+    3300000: zhucheng_beijing00
+    3300002: zhucheng_beijing01
+    3300004: zhucheng_beijing02
+    3300006: zhucheng_beijing03
+    3300008: zhucheng_beijing04
+    3300010: zhucheng_beijing05
+    3300012: zhucheng_beijing06
+    3300014: zhucheng_beijing07
+    3300016: zhucheng_beijing08
+    3300018: zhucheng_beijing09
+    3300020: zhucheng_beijing10
+    3300022: zhucheng_beijing11
+    3300024: zhucheng_beijing12
+    3300026: zhucheng_beijing13
+    3300028: zhucheng_beijing14
+    3300030: zhucheng_beijing15
+    3300032: zhucheng_beijing16
+    3300034: zhucheng_beijing17
+    3300036: MianPian001
+    3300038: MianPian002
+    3300040: MianPian003
+    3300042: MianPian004
+    3300044: MianPian005
+    3300046: MianPian006
+    3300048: MianPian007
+    3300050: MianPian008
+    3300052: MianPian009
+    4300000: zhucheng_beijing17
+    4300002: zhucheng_beijing05
+    4300004: zhucheng_beijing14
+    4300006: zhucheng_beijing15
+    4300008: zhucheng_beijing07
+    4300010: zhucheng_beijing08
+    4300012: zhucheng_beijing09
+    4300014: zhucheng_beijing00
+    4300016: zhucheng_beijing01
+    4300018: zhucheng_beijing02
+    4300020: zhucheng_beijing06
+    4300022: zhucheng_beijing03
+    4300024: zhucheng_beijing10
+    4300026: zhucheng_beijing04
+    4300028: zhucheng_beijing16
+    4300030: zhucheng_beijing11
+    4300032: zhucheng_beijing12
+    4300034: zhucheng_beijing13
+    4300036: MianPian001
+    4300038: MianPian002
+    4300040: MianPian003
+    4300042: MianPian004
+    4300044: MianPian005
+    4300046: MianPian006
+    4300048: MianPian007
+    4300050: MianPian008
+    4300052: MianPian009
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 2
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
