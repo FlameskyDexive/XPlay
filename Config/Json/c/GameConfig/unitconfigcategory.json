@@ -7,7 +7,8 @@
       "text": "米克尔"
     },
     "Position": 1,
-    "Height": 178
+    "Height": 178,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 1002,
@@ -17,7 +18,8 @@
       "text": "米克尔2"
     },
     "Position": 2,
-    "Height": 278
+    "Height": 278,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 1003,
@@ -27,7 +29,8 @@
       "text": "米克尔3"
     },
     "Position": 3,
-    "Height": 279
+    "Height": 279,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 1004,
@@ -37,7 +40,8 @@
       "text": "米克尔4"
     },
     "Position": 4,
-    "Height": 278
+    "Height": 278,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 2001,
@@ -47,7 +51,8 @@
       "text": "米克尔"
     },
     "Position": 1,
-    "Height": 178
+    "Height": 178,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 5001,
@@ -57,7 +62,8 @@
       "text": "米克尔4"
     },
     "Position": 4,
-    "Height": 278
+    "Height": 278,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 3001,
@@ -67,6 +73,7 @@
       "text": "训练假人"
     },
     "Position": 5,
-    "Height": 180
+    "Height": 180,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   }
 ]

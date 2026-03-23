@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 namespace ET.Server
 {
@@ -40,15 +41,49 @@ namespace ET.Server
                 {
                     Unit unit = roomPlayer.Unit;
                     if (unit == null)
+                    {
                         continue;
+                    }
+
+                    if (!HasTransformChanged(roomPlayer, unit))
+                    {
+                        continue;
+                    }
+
                     TransformInfo info = TransformInfo.Create();
                     info.UnitId = unit.Id;
                     info.Forward = unit.Forward;
                     info.Position = unit.Position;
                     sync.TransformInfos.Add(info);
+                    roomPlayer.LastSyncedPosition = unit.Position;
+                    roomPlayer.LastSyncedForward = unit.Forward;
+                    roomPlayer.HasSyncedTransform = true;
                 }
             }
+
+            if (sync.TransformInfos.Count == 0)
+            {
+                sync.Dispose();
+                return;
+            }
+
             StateSyncRoomMessageHelper.BroadCast(self.GetParent<StateSyncRoom>(), sync);
+        }
+
+        private static bool HasTransformChanged(StateSyncRoomPlayer roomPlayer, Unit unit)
+        {
+            if (roomPlayer == null || unit == null || unit.IsDisposed)
+            {
+                return false;
+            }
+
+            if (!roomPlayer.HasSyncedTransform)
+            {
+                return true;
+            }
+
+            return math.lengthsq(unit.Position - roomPlayer.LastSyncedPosition) > 0.0001f
+                    || math.lengthsq(unit.Forward - roomPlayer.LastSyncedForward) > 0.0001f;
         }
 
         public static bool IsAllPlayerProgress100(this StateSyncRoomServerComponent self)

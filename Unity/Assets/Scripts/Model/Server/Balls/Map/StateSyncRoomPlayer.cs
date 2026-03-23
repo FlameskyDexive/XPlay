@@ -15,5 +15,11 @@ namespace ET.Server
         public bool IsReady { get; set; }
 
         public EntityRef<Unit> Unit { get; set; }
+
+        public bool HasSyncedTransform { get; set; }
+
+        public Unity.Mathematics.float3 LastSyncedPosition { get; set; }
+
+        public Unity.Mathematics.float3 LastSyncedForward { get; set; }
     }
 }

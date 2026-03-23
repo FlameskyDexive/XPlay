@@ -10,7 +10,8 @@
     "Weight": 68,
     "Hp": 68,
     "Attack": 10,
-    "Speed": 5
+    "Speed": 5,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 1002,
@@ -23,7 +24,8 @@
     "Weight": 78,
     "Hp": 78,
     "Attack": 10,
-    "Speed": 5
+    "Speed": 5,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 1003,
@@ -36,7 +38,8 @@
     "Weight": 68,
     "Hp": 68,
     "Attack": 10,
-    "Speed": 5
+    "Speed": 5,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 1004,
@@ -49,7 +52,8 @@
     "Weight": 78,
     "Hp": 78,
     "Attack": 10,
-    "Speed": 5
+    "Speed": 5,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 2001,
@@ -62,7 +66,8 @@
     "Weight": 68,
     "Hp": 1,
     "Attack": 0,
-    "Speed": 0
+    "Speed": 0,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 5001,
@@ -75,7 +80,8 @@
     "Weight": 78,
     "Hp": 1,
     "Attack": 0,
-    "Speed": 10
+    "Speed": 10,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   },
   {
     "Id": 3001,
@@ -88,6 +94,7 @@
     "Weight": 72,
     "Hp": 120,
     "Attack": 8,
-    "Speed": 4
+    "Speed": 4,
+    "ResName": "Assets/Bundles/Unit/Player.prefab"
   }
 ]

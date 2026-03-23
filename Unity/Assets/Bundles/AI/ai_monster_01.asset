@@ -140,13 +140,13 @@ MonoBehaviour:
         ValueType: 3
         IntValue: 0
         LongValue: 0
-        FloatValue: 30
+        FloatValue: 2.5
         BoolValue: 0
         StringValue: 
     - Name: tickIntervalMs
       Value:
         ValueType: 1
-        IntValue: 200
+        IntValue: 100
         LongValue: 0
         FloatValue: 0
         BoolValue: 0
@@ -189,7 +189,7 @@ MonoBehaviour:
         ValueType: 3
         IntValue: 0
         LongValue: 0
-        FloatValue: 500
+        FloatValue: 25
         BoolValue: 0
         StringValue: 
     BlackboardKey: 
@@ -235,7 +235,7 @@ MonoBehaviour:
       BoolValue: 0
       StringValue: 
     AbortMode: 1
-    WaitMilliseconds: 5000
+    WaitMilliseconds: 100
     IntervalMilliseconds: 250
     MaxLoopCount: 0
     SuccessPolicy: 1

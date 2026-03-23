@@ -1,3 +1,5 @@
+using System;
+
 namespace ET
 {
     [BTNodeHandler]
@@ -13,7 +15,26 @@ namespace ET
 
             context.SyncCombatBlackboard(unit);
             int preferredSlot = context.GetIntArgument(node.Definition, "preferredSlot", -1);
-            return context.TrySelectSkill(unit, preferredSlot, out _, out _) ? BTExecResult.Success : BTExecResult.Failure;
+            if (!context.TrySelectSkill(unit, preferredSlot, out Skill skill, out int slot))
+            {
+                if (ShouldTrace(context))
+                {
+                    Log.Info($"[MatchRobotAI][{context.TreeName}] select_skill failed unit:{unit.Id} preferred:{preferredSlot}");
+                }
+                return BTExecResult.Failure;
+            }
+
+            if (ShouldTrace(context))
+            {
+                bool canCast = context.Blackboard?.Get<bool>(BTCombatBlackboardKeys.CanCast, false) ?? false;
+                Log.Info($"[MatchRobotAI][{context.TreeName}] select_skill unit:{unit.Id} skill:{skill?.SkillConfig?.Id ?? 0} slot:{slot} canCast:{canCast}");
+            }
+            return BTExecResult.Success;
+        }
+
+        private static bool ShouldTrace(BTExecutionContext context)
+        {
+            return context != null && string.Equals(context.TreeName, ConstValue.StateSyncMatchRobotBehaviorTree, StringComparison.OrdinalIgnoreCase);
         }
     }
 

@@ -60,7 +60,7 @@ namespace ET
             package_Trees_0_Nodes_3_Arguments_0_Value.ValueType = BTValueType.Float;
             package_Trees_0_Nodes_3_Arguments_0_Value.IntValue = 0;
             package_Trees_0_Nodes_3_Arguments_0_Value.LongValue = 0L;
-            package_Trees_0_Nodes_3_Arguments_0_Value.FloatValue = 30f;
+            package_Trees_0_Nodes_3_Arguments_0_Value.FloatValue = 2.5f;
             package_Trees_0_Nodes_3_Arguments_0_Value.BoolValue = false;
             package_Trees_0_Nodes_3_Arguments_0_Value.StringValue = "";
             package_Trees_0_Nodes_3_Arguments_0.Value = package_Trees_0_Nodes_3_Arguments_0_Value;
@@ -69,7 +69,7 @@ namespace ET
             package_Trees_0_Nodes_3_Arguments_1.Name = "tickIntervalMs";
             BTSerializedValue package_Trees_0_Nodes_3_Arguments_1_Value = new();
             package_Trees_0_Nodes_3_Arguments_1_Value.ValueType = BTValueType.Integer;
-            package_Trees_0_Nodes_3_Arguments_1_Value.IntValue = 200;
+            package_Trees_0_Nodes_3_Arguments_1_Value.IntValue = 100;
             package_Trees_0_Nodes_3_Arguments_1_Value.LongValue = 0L;
             package_Trees_0_Nodes_3_Arguments_1_Value.FloatValue = 0f;
             package_Trees_0_Nodes_3_Arguments_1_Value.BoolValue = false;
@@ -90,7 +90,7 @@ namespace ET
             package_Trees_0_Nodes_4_Arguments_0_Value.ValueType = BTValueType.Float;
             package_Trees_0_Nodes_4_Arguments_0_Value.IntValue = 0;
             package_Trees_0_Nodes_4_Arguments_0_Value.LongValue = 0L;
-            package_Trees_0_Nodes_4_Arguments_0_Value.FloatValue = 500f;
+            package_Trees_0_Nodes_4_Arguments_0_Value.FloatValue = 25f;
             package_Trees_0_Nodes_4_Arguments_0_Value.BoolValue = false;
             package_Trees_0_Nodes_4_Arguments_0_Value.StringValue = "";
             package_Trees_0_Nodes_4_Arguments_0.Value = package_Trees_0_Nodes_4_Arguments_0_Value;
@@ -101,7 +101,7 @@ namespace ET
             package_Trees_0_Nodes_5.Title = "Wait";
             package_Trees_0_Nodes_5.NodeKind = BTNodeKind.Wait;
             package_Trees_0_Nodes_5.Comment = "";
-            package_Trees_0_Nodes_5.WaitMilliseconds = 5000;
+            package_Trees_0_Nodes_5.WaitMilliseconds = 100;
             package_Trees_0.Nodes.Add(package_Trees_0_Nodes_5);
             package.Trees.Add(package_Trees_0);
             BTCompiledTreeTemplate templateValue = new(PackageKeyValue, package);

@@ -26,6 +26,7 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
         Hp = _buf.ReadInt();
         Attack = _buf.ReadInt();
         Speed = _buf.ReadFloat();
+        ResName = _buf.ReadString();
         PostInit();
     }
 
@@ -67,6 +68,10 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
     /// 速度
     /// </summary>
     public float Speed { get; private set; }
+    /// <summary>
+    /// ResName
+    /// </summary>
+    public string ResName { get; private set; }
 
     public const int __ID__ = -568528378;
     public override int GetTypeId() => __ID__;
@@ -92,6 +97,7 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
         + "Hp:" + Hp + ","
         + "Attack:" + Attack + ","
         + "Speed:" + Speed + ","
+        + "ResName:" + ResName + ","
         + "}";
     }
     

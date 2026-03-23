@@ -23,6 +23,7 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
         Name_l10n_key = _buf.ReadString(); Name = _buf.ReadString();
         Position = _buf.ReadInt();
         Height = _buf.ReadInt();
+        ResName = _buf.ReadString();
         PostInit();
     }
 
@@ -52,6 +53,10 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
     ///  
     /// </summary>
     public int Height { get; private set; }
+    /// <summary>
+    /// ResName
+    /// </summary>
+    public string ResName { get; private set; }
 
     public const int __ID__ = -568528378;
     public override int GetTypeId() => __ID__;
@@ -74,6 +79,7 @@ public sealed partial class UnitConfig: Bright.Config.BeanBase
         + "Name:" + Name + ","
         + "Position:" + Position + ","
         + "Height:" + Height + ","
+        + "ResName:" + ResName + ","
         + "}";
     }
     

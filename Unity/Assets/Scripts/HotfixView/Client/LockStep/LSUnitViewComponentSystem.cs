@@ -5,6 +5,8 @@ namespace ET.Client
     [EntitySystemOf(typeof(LSUnitViewComponent))]
     public static partial class LSUnitViewComponentSystem
     {
+        private const string DefaultUnitAssetPath = "Assets/Bundles/Unit/Player.prefab";
+
         [EntitySystem]
         private static void Awake(this LSUnitViewComponent self)
         {
@@ -25,9 +27,11 @@ namespace ET.Client
             foreach (long playerId in room.PlayerIds)
             {
                 LSUnit lsUnit = lsUnitComponent.GetChild<LSUnit>(playerId);
-                string assetsName = $"Assets/Bundles/Unit/Unit.prefab";
-                GameObject bundleGameObject = await room.GetComponent<ResourcesLoaderComponent>().LoadAssetAsync<GameObject>(assetsName);
-                GameObject prefab = bundleGameObject.Get<GameObject>("Skeleton");
+                GameObject prefab = await room.GetComponent<ResourcesLoaderComponent>().LoadAssetAsync<GameObject>(DefaultUnitAssetPath);
+                if (prefab == null)
+                {
+                    continue;
+                }
 
                 GlobalComponent globalComponent = root.GetComponent<GlobalComponent>();
                 GameObject unitGo = UnityEngine.Object.Instantiate(prefab, globalComponent.Unit, true);

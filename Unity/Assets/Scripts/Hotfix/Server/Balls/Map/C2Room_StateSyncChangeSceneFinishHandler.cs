@@ -86,14 +86,18 @@ namespace ET.Server
         private static UnitInfo CreatePlayerUnitInfo(Scene root, StateSyncRoomPlayer roomPlayer, float3 spawnPosition, float3 spawnForward)
         {
             Unit unit = roomPlayer.Unit;
-            if (unit == null || unit.IsDisposed)
+            if (unit == null || unit.IsDisposed || unit.ConfigId != ConstValue.DefaultPlayerUnitConfigId)
             {
+                unit?.Dispose();
                 unit = UnitFactory.Create(root, roomPlayer.Id, EUnitType.Player);
                 roomPlayer.Unit = unit;
             }
 
             unit.Position = spawnPosition;
             unit.Forward = spawnForward;
+            roomPlayer.LastSyncedPosition = spawnPosition;
+            roomPlayer.LastSyncedForward = spawnForward;
+            roomPlayer.HasSyncedTransform = true;
 
             UnitInfo unitInfo = UnitHelper.CreateUnitInfo(unit);
             SkillComponent skillComponent = unit.GetComponent<SkillComponent>();

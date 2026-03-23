@@ -14,7 +14,7 @@ namespace ET.Server
             {
                 case EUnitType.Player:
                 {
-                    Unit unit = unitComponent.AddChildWithId<Unit, int>(id, 1001);
+                    Unit unit = unitComponent.AddChildWithId<Unit, int>(id, ConstValue.DefaultPlayerUnitConfigId);
                     unit.AddComponent<PlayerMoveComponent>();
                     AddCombatCollider(unit);
 

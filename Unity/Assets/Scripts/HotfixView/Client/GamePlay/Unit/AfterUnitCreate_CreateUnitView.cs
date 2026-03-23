@@ -5,9 +5,7 @@ namespace ET.Client
     [Event(SceneType.Current)]
     public class AfterUnitCreate_CreateUnitView: AEvent<Scene, AfterUnitCreate>
     {
-        private const string UnitBundleAssetPath = "Assets/Bundles/Unit/Unit.prefab";
-        private const string UnitPrefabKey = "Skeleton";
-        private const string PlayerFallbackAsset = "Player";
+        private const string DefaultUnitAssetPath = "Assets/Bundles/Unit/Player.prefab";
 
         protected override async ETTask Run(Scene scene, AfterUnitCreate args)
         {
@@ -20,7 +18,8 @@ namespace ET.Client
                 case EUnitType.Player:
                 case EUnitType.Monster:
                 {
-                    GameObject prefab = await LoadBattleUnitPrefab(scene);
+                    string resName = GetBattleUnitResName(unit);
+                    GameObject prefab = await scene.GetComponent<ResourcesLoaderComponent>().LoadAssetAsync<GameObject>(resName);
                     scene = sceneRef;
                     unit = unitRef;
                     if (scene == null || unit == null || unit.IsDisposed || prefab == null)
@@ -82,21 +81,28 @@ namespace ET.Client
 
         private static async ETTask<GameObject> LoadBattleUnitPrefab(Scene scene)
         {
-            EntityRef<Scene> sceneRef = scene;
-            GameObject bundleGameObject = await scene.GetComponent<ResourcesLoaderComponent>().LoadAssetAsync<GameObject>(UnitBundleAssetPath);
-            scene = sceneRef;
-            if (scene == null)
+            return await scene.GetComponent<ResourcesLoaderComponent>().LoadAssetAsync<GameObject>(DefaultUnitAssetPath);
+        }
+
+        private static string GetBattleUnitResName(Unit unit)
+        {
+            if (unit == null || unit.IsDisposed)
             {
-                return null;
+                return DefaultUnitAssetPath;
             }
 
-            GameObject prefab = bundleGameObject?.Get<GameObject>(UnitPrefabKey);
-            if (prefab != null)
+            string resName = unit.Config()?.ResName;
+            if (string.IsNullOrWhiteSpace(resName))
             {
-                return prefab;
+                return DefaultUnitAssetPath;
             }
 
-            return await scene.GetComponent<ResourcesLoaderComponent>().LoadAssetAsync<GameObject>(PlayerFallbackAsset);
+            if (resName.Contains("/") || resName.Contains("\\"))
+            {
+                return resName;
+            }
+
+            return $"Assets/Bundles/Unit/{resName}.prefab";
         }
     }
 }

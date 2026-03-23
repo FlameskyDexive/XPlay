@@ -155,10 +155,19 @@ namespace ET
                 return false;
             }
 
+            Skill fallbackSkill = null;
+            int fallbackSlot = -1;
+
             if (preferredSlot >= 0 && skillComponent.TryGetSkill(ESkillAbstractType.ActiveSkill, preferredSlot, out skill))
             {
                 slot = preferredSlot;
-                return CacheSelectedSkill(self, unit, skill, slot, skillCastComponent);
+                if (CacheSelectedSkill(self, skill, slot, skillCastComponent, true))
+                {
+                    return true;
+                }
+
+                fallbackSkill ??= skill;
+                fallbackSlot = slot;
             }
 
             for (int index = 0; index < 8; ++index)
@@ -169,9 +178,15 @@ namespace ET
                 }
 
                 slot = index;
-                if (CacheSelectedSkill(self, unit, skill, slot, skillCastComponent))
+                if (CacheSelectedSkill(self, skill, slot, skillCastComponent, true))
                 {
                     return true;
+                }
+
+                if (fallbackSkill == null)
+                {
+                    fallbackSkill = skill;
+                    fallbackSlot = slot;
                 }
             }
 
@@ -183,10 +198,24 @@ namespace ET
                 }
 
                 slot = index;
-                if (CacheSelectedSkill(self, unit, skill, slot, skillCastComponent))
+                if (CacheSelectedSkill(self, skill, slot, skillCastComponent, true))
                 {
                     return true;
                 }
+
+                if (fallbackSkill == null)
+                {
+                    fallbackSkill = skill;
+                    fallbackSlot = slot;
+                }
+            }
+
+            if (fallbackSkill != null)
+            {
+                skill = fallbackSkill;
+                slot = fallbackSlot;
+                CacheSelectedSkill(self, skill, slot, skillCastComponent, false);
+                return true;
             }
 
             self.ClearSelectedSkill();
@@ -391,7 +420,8 @@ namespace ET
             return math.clamp((float)numericComponent.GetAsLong(NumericType.Hp) / maxHp, 0f, 1f);
         }
 
-        private static bool CacheSelectedSkill(BTExecutionContext self, Unit unit, Skill skill, int slot, SkillCastComponent skillCastComponent)
+        private static bool CacheSelectedSkill(BTExecutionContext self, Skill skill, int slot,
+            SkillCastComponent skillCastComponent, bool requireCastable)
         {
             if (skill == null)
             {
@@ -402,7 +432,7 @@ namespace ET
             self.Blackboard.Set(BTCombatBlackboardKeys.SelectedSkillSlot, slot);
             bool canCast = skillCastComponent.ValidateCast(skill) == ESkillCastResult.Success;
             self.Blackboard.Set(BTCombatBlackboardKeys.CanCast, canCast);
-            return canCast;
+            return !requireCastable || canCast;
         }
 
         private static ECombatTag GetStateSwitchBlockTags()
